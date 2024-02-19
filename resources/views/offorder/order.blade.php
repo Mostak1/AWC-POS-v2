@@ -102,7 +102,7 @@
                                 Phone#
                                 01979756069
                             </div>
-                           
+
                             <div class="d-flex justify-content-between my-2">
                                 <div class="r-text ">
                                     Date: @php
@@ -161,7 +161,7 @@
                         <div id="invoiceStaff" class="text-center text-danger fs-4 my-2">
 
                         </div>
-                   
+
 
                         <div class="row r-text mb-2">
                             <div class="col-3">
@@ -177,37 +177,41 @@
                                 Total
                             </div>
                         </div>
-                      
+
 
                         <div class="orders r-text" id="orders">
 
                         </div>
-
-                    
-
                         <div class="mt-4">
                             <span>GROSS Total: </span>
                             <span id="total-order"></span>
                             <span>TK</span>
-                        </div>
-                    
-
-                        <div class="form-row my-2">
-                            <div class="form-group col-md-6 col-sm-6">
-                                <label for="staffs">Staff Name</label>
-                                <select name="staffs" id="staffs" class="form-control select2">
-                                    <option value="0">Customer</option>
-                                    @foreach ($staffs as $staff)
-                                        <option value="{{ $staff->id }}"
-                                            data-sname="{{ $staff->name }}-{{ $staff->employeeId }}">{{ $staff->name }} -
-                                            {{ $staff->employeeId }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div class="d-print-none">
+                                <input type="text" id="number" class="form-control w-50"
+                                    placeholder="Input Customer Mobile Number">
+                                <span id="mobile_number_error" style="color: red;"></span>
                             </div>
                         </div>
 
 
+                        <div class="form-row my-2 d-print-none">
+                            <div class="form-group col-md-6 col-sm-6">
+                                <div>
+
+                                    <label for="staffs">Staff Name</label>
+                                    <select name="staffs" id="staffs" class="form-control select2">
+                                        <option value="0">Customer</option>
+                                        @foreach ($staffs as $staff)
+                                            <option value="{{ $staff->id }}"
+                                                data-sname="{{ $staff->name }}-{{ $staff->employeeId }}">
+                                                {{ $staff->name }} -
+                                                {{ $staff->employeeId }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         {{-- <div class="">
                             <span>Special Discount: </span>
                             <span id="discount">0</span>
@@ -308,7 +312,7 @@
                     $('#bkashInput').removeClass('d-none');
                     $("#cardInput input").val(""); // Clear card input if visible
                     $('#transactionId').on('input', function() {
-                        $('#transactionId1').text('Transaction ID: '+ $(this).val());
+                        $('#transactionId1').text('Transaction ID: ' + $(this).val());
                     });
                     $("#transactionId1").text(trid);
                 } else if (selectedMethod === "card") {
@@ -316,7 +320,7 @@
                     $('#cardInput').removeClass('d-none');
                     $("#bkashInput input").val(""); // Clear bkash input if visible
                     $('#cardLastDigits').on('input', function() {
-                        $('#transactionId1').text('Card Last 4 Digit: ' +$(this).val());
+                        $('#transactionId1').text('Card Last 4 Digit: ' + $(this).val());
                     });
                 }
             });
@@ -355,12 +359,12 @@
                                         <span class="id d-none">${ menu.id }</span>
                                         <h5 class="card-title name">${ menu.name }</h5>
                                         <div class="card-text ">
-                                            <div class="text-decoration-line-through">
+                                            <div class="d-none text-decoration-line-through">
                                                 <span>Price: </span><span class="discount"> ${ menu.price }</span>TK
                                                 </div>
                                            <div>
-                                            <span>Discount Price:</span>
-                                            <span  class="price customer"> ${cDiscount }</span>
+                                            <span>Price:</span>
+                                            <span  class="price customer"> ${menu.price }</span>
                                             </div>
                                             
                                         </div>
@@ -442,6 +446,7 @@
 
                     $('#customerView').removeClass('d-none');
                     $('#staffView').addClass('d-none');
+                    $('#number').addClass('d-none');
 
                     $('.customer').addClass('d-none');
                     let sName = $('#staffs').data('sname');
@@ -487,7 +492,7 @@
                     })
                     .done(function(data) {
                         if (data.length != 0) {
-                           
+
                         } else {
                             console.log("no Data in the databaes");
                         }
@@ -727,24 +732,60 @@
                 var tax = parseFloat($('#tax').text());
                 // var dis = parseFloat($('#discount').text());
 
-                var num = tbill ;
+                var num = tbill;
                 $('#total-order2').text(num);
             })
 
             function payAmount() {
-
                 var tbill = parseFloat($('#total-order').text());
                 var tax = parseFloat($('#tax').text());
                 // var dis = parseFloat($('#discount').text());
-
-                var num = tbill;
-                $('#total-order2').text(num);
+                var mobileNumber = $('#number').val(); // Assuming the mobile number input field has an id of 'number'
+                // Regular expression pattern to match mobile numbers starting with "01" and of length 11
+                var pattern = /^01[0-9]{9}$/;
+                if (pattern.test(mobileNumber)) {
+                    var num = tbill - 0.2 * tbill; // Assuming you want to apply a 20% discount
+                    $('#total-order2').text(num.toFixed(2)); // Update the total order amount
+                } else {
+                    $('#total-order2').text(tbill.toFixed(2)); // Update the total order amount without discount
+                }
             }
-            // order Submitted
 
+            // order Submitted
+            $('#number').on('input', function() {
+                var mobileNumber = $(this).val();
+                // Regular expression pattern to match mobile numbers starting with "01" and of length 11
+                var pattern = /^01[0-9]{9}$/;
+                if (pattern.test(mobileNumber)) {
+                    $('#mobile_number_error').text('');
+                    payAmount();
+                } else {
+                    $('#mobile_number_error').text(
+                        'Mobile number must start with "01" and have a length of 11 characters.'
+                    );
+                    return;
+                }
+            });
             $('#submitp').click(function() {
+                var number = $('#number').val();
+                var pattern = /^01[0-9]{9}$/;
+                if (!number == "" && !pattern.test(number)) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Check Customer Mobile Number',
+                        showCancelButton: true,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'Cancel',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
+                    return false;
+                }
+
                 var items = [];
-                var totalbill = $('#total-order').text();
+                var totalbill = $('#total-order2').text();
                 // var discount = $('#discount').text();
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
@@ -840,6 +881,7 @@
                     type: 'POST',
                     data: {
                         items: items,
+                        number: number,
                         totalbill: totalbill,
                         discount: 0,
                         reason: sNameText,

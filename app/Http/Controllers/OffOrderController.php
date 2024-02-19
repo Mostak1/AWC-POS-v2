@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OffOrder;
 use App\Http\Controllers\Controller;
+use App\Models\CustomerToken;
 use App\Models\Menu;
 use App\Models\OffOrderDetails;
 use App\Models\OrderLog;
@@ -63,12 +64,19 @@ class OffOrderController extends Controller
             $order->discount = $request->discount;
             $order->reason = $request->reason;
             if ($request->reason == 'Customer') {
-                $order->active =1;
+                $order->active = 1;
             } else {
-                $order->active =2;
+                $order->active = 2;
             }
-            
+
             $order->save();
+            if ($request->number !== null) {
+                # code...
+                $token = new CustomerToken();
+                $token->mobile = $request->number;
+                $token->order_id = $order->id;
+                $token->save();
+            }
 
             $payment = new Payment();
             $payment->order_id = $order->id;

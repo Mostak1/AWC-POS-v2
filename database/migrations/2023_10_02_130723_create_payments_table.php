@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('cash');
             $table->string('e_cash');
             $table->string('method');
-            $table->string('tranjection_number');
+            $table->string('tranjection_number')->nullable();
             $table->float("total",10,2);
             $table->timestamps();
             $table->softDeletes();
