@@ -1,0 +1,87 @@
+Dear [Recipient's Name],
+
+I trust this email finds you well.
+
+I am writing to share a Google Sheets document related to [briefly mention the purpose or content of the document]. The link to the document is provided below:
+
+Google Sheets Document Link
+
+Document Overview:
+
+[Provide a brief overview of the document, its purpose, and any specific actions required from the recipient.]
+
+Access and Permissions:
+
+[If necessary, mention any access permissions required or special instructions for viewing/editing the document.]
+
+I kindly request you to review the document at your earliest convenience and provide any feedback or input by [deadline, if applicable].
+
+Feel free to reach out if you have any questions or require further clarification.
+
+Thank you for your attention to this matter.
+
+Best regards,
+
+[Your Full Name]
+[Your Position]
+[Your Contact Information]
+
+
+
+
+
+
+
+
+
+UPDATE permissions
+SET group_name = 'menus'
+WHERE name LIKE 'menus%';
+
+UPDATE permissions
+SET group_name = 'tab'
+WHERE name LIKE 'tab%';
+
+UPDATE permissions
+SET group_name = 'offorder'
+WHERE name LIKE 'offorder%';
+
+UPDATE permissions
+SET group_name = 'setting'
+WHERE name LIKE 'setting%';
+
+UPDATE permissions
+SET group_name = 'offorderdetails'
+WHERE name LIKE 'offorderdetails%';
+
+UPDATE permissions
+SET group_name = 'supplier'
+WHERE name LIKE 'supplier%';
+
+UPDATE permissions
+SET group_name = 'material'
+WHERE name LIKE 'material%';
+
+UPDATE permissions
+SET group_name = 'purchase'
+WHERE name LIKE 'purchase%';
+
+UPDATE permissions
+SET group_name = 'role'
+WHERE name LIKE 'role%';
+
+UPDATE permissions
+SET group_name = 'urole'
+WHERE name LIKE 'urole%';
+
+UPDATE permissions
+SET group_name = 'card'
+WHERE name LIKE 'card%';
+
+UPDATE permissions
+SET group_name = 'customer'
+WHERE name LIKE 'customer%';
+
+UPDATE permissions
+SET group_name = 'users'
+WHERE name LIKE 'users%';
