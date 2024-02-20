@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customer_tokens', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->unsigned();
-            $table->foreign('order_id')->references('id')->on('off_orders');
+            $table->foreign('order_id')->references('id')->on('off_orders')->onDelete('cascade');
             $table->text('mobile');
             $table->timestamps();
             $table->softDeletes();

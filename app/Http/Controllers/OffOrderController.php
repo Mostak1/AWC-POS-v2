@@ -91,21 +91,6 @@ class OffOrderController extends Controller
             }
 
             $payment->save();
-
-            // if ($request->staff > 0) {
-            //     $staffor = new StaffOrder();
-            //     $staffor->staff_id = $request->staff;
-            //     $staffor->off_order_id = $order->id;
-            //     $staffor->point = $request->totalbill * .02;
-            //     $staffor->save();
-
-            //     $staff = Staff::find($request->staff);
-            //     if ($staff) {
-            //         $staff->total_order = $staff->total_order + 1;
-            //         $staff->total_point = $staff->total_point + $request->totalbill * .02;
-            //         $staff->save();
-            //     }
-            // }
             foreach ($request->items as $item) {
                 $orderDetail = new OffOrderDetails();
                 $orderDetail->off_order_id = $order->id;

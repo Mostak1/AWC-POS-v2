@@ -187,17 +187,15 @@
                             <span id="total-order"></span>
                             <span>TK</span>
                             <div class="d-print-none">
-                                <input type="text" id="number" class="form-control w-50"
+                                <button type="button" class="my-2 btn btn-outline-success" id="allowDiscount">Apply Discount</button>
+                                <input type="text" id="number" class="d-none form-control w-50"
                                     placeholder="Input Customer Mobile Number">
                                 <span id="mobile_number_error" style="color: red;"></span>
                             </div>
                         </div>
-
-
                         <div class="form-row my-2 d-print-none">
                             <div class="form-group col-md-6 col-sm-6">
                                 <div>
-
                                     <label for="staffs">Staff Name</label>
                                     <select name="staffs" id="staffs" class="form-control select2">
                                         <option value="0">Customer</option>
@@ -212,11 +210,11 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="">
-                            <span>Special Discount: </span>
-                            <span id="discount">0</span>
-                            <span>TK</span>
-                        </div> --}}
+                        <div class="">
+                            
+                            <span id="discount" class="d-none">20% Discount Applied</span>
+                            
+                        </div>
                         <div>
                             <span>Ammount to Pay: </span>
                             <span id="total-order2"></span>
@@ -298,6 +296,7 @@
             }
         });
         $(document).ready(function() {
+            // 
             // product show by category
             $("#paymentMethod").change(function() {
                 var selectedMethod = $(this).val();
@@ -725,15 +724,8 @@
                 $('#total-order').text(subtotal.toFixed(2));
             }
 
-            $('#apply_dis').click(function() {
-                // var disc = parseInt($('#dis_input').val());
-                // $('#discount').text(disc);
-                var tbill = parseFloat($('#total-order').text());
-                var tax = parseFloat($('#tax').text());
-                // var dis = parseFloat($('#discount').text());
-
-                var num = tbill;
-                $('#total-order2').text(num);
+            $('#allowDiscount').click(function() {
+               $('#number').toggleClass('d-none');
             })
 
             function payAmount() {
@@ -746,6 +738,7 @@
                 if (pattern.test(mobileNumber)) {
                     var num = tbill - 0.2 * tbill; // Assuming you want to apply a 20% discount
                     $('#total-order2').text(num.toFixed(2)); // Update the total order amount
+                    $('#discount').removeClass('d-none');
                 } else {
                     $('#total-order2').text(tbill.toFixed(2)); // Update the total order amount without discount
                 }

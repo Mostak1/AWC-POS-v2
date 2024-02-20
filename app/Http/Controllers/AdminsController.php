@@ -140,7 +140,6 @@ class AdminsController extends Controller
         $request->validate([
             'name' => 'required|max:50',
             'email' => 'required|max:100|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:6|confirmed',
         ]);
 
 
