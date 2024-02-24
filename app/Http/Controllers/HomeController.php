@@ -242,6 +242,8 @@ class HomeController extends Controller
         $invoice = $id;
         $payMethod = $order->payment->method;
         $total = $order->total;
+        $discount = $order->discount;
+        $active = $order->active;
         // Filter and aggregate data
         $staffData = [];
         foreach ($data as $order) {
@@ -300,6 +302,6 @@ class HomeController extends Controller
                 }
             }
         }
-        return view('receipt', compact('staffData', 'invoice', 'payMethod', 'total'));
+        return view('receipt', compact('staffData', 'invoice', 'payMethod', 'total','discount','active'));
     }
 }

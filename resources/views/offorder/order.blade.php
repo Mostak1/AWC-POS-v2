@@ -26,10 +26,6 @@
             @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 
             * {
-                /* font-family: 'Oranienbaum', serif; */
-                /* font-family: 'Share Tech Mono', monospace; */
-                /* font-family: 'Philosopher', sans-serif; */
-                /* font-family: 'DotGothic16', sans-serif; */
                 font-family: 'Fira Mono', monospace;
             }
 
@@ -778,7 +774,8 @@
                 }
 
                 var items = [];
-                var totalbill = $('#total-order2').text();
+                var totalbill = $('#total-order').text();
+                var paybill = $('#total-order2').text();
                 // var discount = $('#discount').text();
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
@@ -876,7 +873,7 @@
                         items: items,
                         number: number,
                         totalbill: totalbill,
-                        discount: 0,
+                        discount: totalbill-paybill,
                         reason: sNameText,
                         staff: staff,
                         paymentMethod: selectedMethod,

@@ -194,7 +194,7 @@
                             </div>
                         </div>
                     </div>
-                    @if ($user->can('dailyreporyt'))
+                    
                         <div class="card p-4">
                             <form action="{{ route('reportPage') }}" method="post">
                                 @csrf
@@ -206,7 +206,7 @@
                                 <button type="submit" class="btn btn-primary">Show Report</button>
                             </form>
                         </div>
-                    @endif
+                   
                     <div class="p-4 rounded-4 Larger shadow  bg-white card-hover  my-5">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

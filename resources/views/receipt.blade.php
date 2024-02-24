@@ -1,12 +1,18 @@
 @extends('layouts.main')
 @section('css')
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
+
         @media print {
 
             table,
             .ptext {
-                font-size: 10pt;
+                font-size: 8pt;
                 margin-bottom: 1px;
+                font-weight: 900;
+                font-family: "Oswald", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
             }
 
             th,
@@ -30,7 +36,7 @@
         <div class="m-0 font-weight-bold btn btn-outline-info" id="submitp"><i class="fa-solid fa-print"></i></div>
 
     </div>
-   
+
     <div id="print" class="card p-2">
         <div class=" d-print-block">
             <div class="fs-3 text-center r-heading">GREEN KITCHEN</div>
@@ -60,15 +66,15 @@
             </div>
             <div class="d-flex justify-content-between my-2">
                 <div class="fs-2 font-weight-bold">Paid</div>
-                <div class="r-text">Invoice ID: 000{{$invoice}}
+                <div class="r-text">Invoice ID: 000{{ $invoice }}
                 </div>
             </div>
         </div>
         <div class="row row-cols-1  d-print-block">
-            <div class="col">Payment Methode: {{$payMethod}}</div>
+            <div class="col">Payment Methode: {{ $payMethod }}</div>
             <div class="col"> <span id="transactionId1"></span></div>
         </div>
-        
+
 
         <div id="invoiceStaff" class="text-center text-danger fs-4 my-2">
 
@@ -92,32 +98,53 @@
 
 
         <div class="orders r-text" id="orders">
-            @foreach ($staffData as $item)
-            <div class="row r-text mb-2">
-                <div class="col-3">
-                 {{ $item['menuName']}}
-                </div>
-                <div class="col-2">
-                    {{ $item['quantity'] }}
-                </div>
-                <div class="col-3">
-                    <div class="text-decoration-line-through">
-                        {{ $item['price'] }}Tk
+            @if ($active == 1)
+                @foreach ($staffData as $item)
+                    <div class="row r-text mb-2">
+                        <div class="col-3">
+                            {{ $item['menuName'] }}
+                        </div>
+                        <div class="col-2">
+                            {{ $item['quantity'] }}
+                        </div>
+                        <div class="col-3">
+
+                            <div class="">
+                                {{ $item['price'] }}Tk
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            {{ $item['total'] }}
+                        </div>
                     </div>
-                    @if ($item['cprice']!==0)
-                    {{ $item['cprice'] }}Tk
-                    @else
-                    {{ $item['sprice'] }}Tk
-                        
-                    @endif
-                    
-                </div>
-                <div class="col-2">
-                    {{ $item['total'] }}
-                </div>
-            </div>
-         
-        @endforeach
+                @endforeach
+            @else
+                @foreach ($staffData as $item)
+                    <div class="row r-text mb-2">
+                        <div class="col-3">
+                            {{ $item['menuName'] }}
+                        </div>
+                        <div class="col-2">
+                            {{ $item['quantity'] }}
+                        </div>
+                        <div class="col-3">
+
+                            <div class="text-decoration-line-through">
+                                {{ $item['price'] }}Tk
+                            </div>
+                            @if ($item['cprice'] !== 0)
+                                {{ $item['cprice'] }}Tk
+                            @else
+                                {{ $item['sprice'] }}Tk
+                            @endif
+
+                        </div>
+                        <div class="col-2">
+                            {{ $item['total'] }}
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
 
 
@@ -151,7 +178,15 @@
             <span>TK</span>
         </div> --}}
         <div>
-            <span>Ammount to Pay: {{$total}} </span>
+            <span>GROSS Total: {{ $total }} </span>
+            <span id="total-order2"></span>
+            <span>TK</span>
+        </div>
+        <div>
+            @if ($total > $total - $discount)
+                <div class="div">20% Discount Applied</div>
+            @endif
+            <span>Ammount to Pay: {{ $total - $discount }} </span>
             <span id="total-order2"></span>
             <span>TK</span>
         </div>

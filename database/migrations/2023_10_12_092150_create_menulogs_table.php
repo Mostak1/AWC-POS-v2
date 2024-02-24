@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('menulogs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('menu_id')->unsigned();
-            $table->foreign('menu_id')->references('id')->on('menus');
+            $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('old');
             $table->string('new');
             $table->string('methode');
