@@ -123,11 +123,11 @@ class OffOrderController extends Controller
     public function show(OffOrder $offorder)
     {
         // $items = OffOrderDetails::with('offorder', 'menu')->where('off_order_id', $offorder->id)->get();
-        $items = OffOrderDetails::with('offorder', 'menu')
+        $items = OffOrderDetails::with('off_order', 'menu')
             ->where('off_order_id', $offorder->id)
             ->get();
 
-        return view('offorder.show', compact('items'))->with('user', Auth::user());
+        return view('offorder.show', compact('items','offorder'))->with('user', Auth::user());
     }
 
     /**

@@ -15,7 +15,7 @@ class OffOrderDetailsController extends Controller
      */
     public function index()
     {
-        $items = OffOrderDetails::with('offorder', 'menu')->get();
+        $items = OffOrderDetails::with('off_order', 'menu')->get();
 
         return view('offorderdetails.index', compact('items'));
     }

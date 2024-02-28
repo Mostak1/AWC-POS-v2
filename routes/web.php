@@ -36,12 +36,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/linkstorage', function () {
-//     $targetFolder = base_path().'/storage/app/public';
-//     $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/storage';
-//     symlink($targetFolder, $linkFolder);
+Route::get('/linkstorage', function () {
+    $targetFolder = base_path().'/storage/app/public';
+    $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/public/storage';
+    symlink($targetFolder, $linkFolder);
 
-//  });
+ });
 Route::get('moneyReceipt/{id}',[HomeController::class,'moneyReceipt'])->name('moneyReceipt');
 Route::post('reportPage',[HomeController::class,'reportPage'])->name('reportPage');
 Route::get('printrecipt/{id}', [HomeController::class,'printrecipt']);
