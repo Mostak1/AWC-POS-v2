@@ -17,7 +17,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th colspan="8" class="tablebtn text-end">
+                            <th colspan="9" class="tablebtn text-end">
                             </th>
                         </tr>
                         <tr>
@@ -26,6 +26,7 @@
                             <th>Total Amount</th>
                             <th>Discount</th>
                             <th>Reason</th>
+                            <th>Staff/Other</th>
                             <th>Order By</th>
                             <th>Order Time</th>
                             <th>Action</th>
@@ -40,8 +41,15 @@
                                 <td>{{ $offorder->total }}</td>
                                 <td>{{ $offorder->discount }}</td>
                                 <td>{{ $offorder->reason }}</td>
+                                <td>
+                                    @if ($offorder->active==1)
+                                    Customer
+                                    @elseif($offorder->active==2)
+                                    Staff
+                                    @endif
+                                </td>
                                 <td>{{ $offorder->user->name }}</td>
-                                <td>{{ $offorder->created_at }}</td>
+                                <td>{{ $offorder->created_at->format('d M y') }}</td>
 
                                 <td class="">
                                     <div class="skip d-flex justify-content-center">
