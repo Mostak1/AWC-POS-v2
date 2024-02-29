@@ -2,7 +2,7 @@
 @section('content')
     <div class="card card-hover shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between">
-            <h4 class="m-0 font-weight-bold text-info">Update Order</h4>
+            <h4 class="m-0 font-weight-bold text-info">Update Order {{ $offorder->id }}</h4>
             <a href="{{ url('offorder') }}" class="btn btn-info  btn-sm" title="Back to Class">
                 <i class="fas fa-arrow-left"></i>
             </a>
@@ -14,25 +14,18 @@
                 'class' => 'Order',
                 'route' => ['offorder.update', $offorder->id],
             ]) !!}
-           
-          
-            
             <div class="form-group row">
-                  <div class="col-sm-4">
-                <label for="tab_id" class="form-label">Table Name:</label>
-                {!! Form::select('tab_id',$tabs,null, [
-                    'required',
-                    'class' => 'form-control form-control-profile',
-                    'id' => 'tab_id',
-                ]) !!}
-            </div>
-                <div class="col-sm-4 mb-3 mb-sm-0">
-                    <label for="total" class="form-label">Total :</label>
-                    {!! Form::number('total', null, [
+                <div class="col-sm-4">
+                    <label for="tab_id" class="form-label">Table Name:</label>
+                    {!! Form::select('tab_id', $tabs, null, [
                         'required',
                         'class' => 'form-control form-control-profile',
-                        'id' => 'total',
+                        'id' => 'tab_id',
                     ]) !!}
+                </div>
+                <div class="col-sm-4 mb-3 mb-sm-0">
+                    <label for="total" class="form-label">Total :</label>
+                    {!! Form::number('total', null, ['required', 'class' => 'form-control form-control-profile', 'id' => 'total']) !!}
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="discount" class="form-label">Discount :</label>
@@ -44,14 +37,14 @@
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="reason" class="form-label">Reason :</label>
-                    {!! Form::text('reason', null, [
-                        'required',
-                        'class' => 'form-control form-control-profile',
-                        'id' => 'reason',
-                    ]) !!}
+                    {!! Form::text('reason', null, ['required', 'class' => 'form-control form-control-profile', 'id' => 'reason']) !!}
                 </div>
-                
-               
+                <div class="col-sm-4 mb-3 mb-sm-0">
+                    <label for="active" class="form-label">Active :</label>
+                    {!! Form::text('active', null, ['required', 'class' => 'form-control form-control-profile', 'id' => 'active']) !!}
+                </div>
+
+
             </div>
             <div class="form-group">
                 {!! Form::submit('Update Orders', ['class' => 'mt-3 btn btn-info btn-profile btn-block']) !!}

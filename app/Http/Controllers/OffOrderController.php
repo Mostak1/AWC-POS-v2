@@ -25,7 +25,7 @@ class OffOrderController extends Controller
      */
     public function index()
     {
-        $items = OffOrder::with('tab', 'user')->get();
+        $items = OffOrder::with('tab', 'user','payment')->get();
         return view('offorder.index')->with('items', $items);
     }
     public function dailyreport()
@@ -127,7 +127,7 @@ class OffOrderController extends Controller
             ->where('off_order_id', $offorder->id)
             ->get();
 
-        return view('offorder.show', compact('items','offorder'))->with('user', Auth::user());
+        return view('offorder.show', compact('items', 'offorder'))->with('user', Auth::user());
     }
 
     /**
@@ -150,7 +150,8 @@ class OffOrderController extends Controller
             'tab_id' => $request->tab_id,
             'total' => $request->total,
             'discount' => $request->discount,
-            'reason' => $request->reason
+            'reason' => $request->reason,
+            'active' => $request->active
         ];
         $old = OffOrder::find($offorder->id);
 
@@ -218,8 +219,19 @@ class OffOrderController extends Controller
      */
     public function destroy(OffOrder $offOrder)
     {
+       
+        // OffOrderDetails::where('off_order_id', $offOrder->id)->delete();
+        $payment = Payment::where('order_id', $offOrder->id)->first();
+
+        if ($payment) {
+            dd($payment->id);
+        } else {
+            dd('No payment found for the given order.');
+        }
+        
+
         OffOrderDetails::where('off_order_id', $offOrder->id)->delete();
-        if (OffOrder::destroy($offOrder->id)) {
+        if ($offOrder->delete()) {
             $logData = [
                 'off_order_id' => $offOrder->id,
                 'user_id' => Auth::user()->id,
@@ -230,7 +242,7 @@ class OffOrderController extends Controller
             } else {
                 return back()->with('info', $log . "Not Insert!");
             }
-            return back()->with('success', $offOrder->id . ' Deleted!!!!');
+            return back()->with('success', $offOrder->id . ' Deleted');
         } else {
 
             return back()->with('error', $offOrder->id . 'Not Deleted!!!!');

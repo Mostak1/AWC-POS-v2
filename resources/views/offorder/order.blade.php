@@ -124,35 +124,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row row-cols-1 d-none d-print-block">
-                            <div class="col">Payment Methode: <span id="paymentMethod1">Cash</span></div>
-                            <div class="col"> <span id="transactionId1"></span></div>
-                        </div>
-                        <div class="row row-cols-2 d-print-none">
-
-                            <div class="mb-3 col">
-                                <label for="paymentMethod" class="form-label">Select Payment Method</label>
-                                <select class="form-select" id="paymentMethod" name="paymentMethod">
-                                    <option value="cash">Cash</option>
-                                    <option value="bkash">Bkash</option>
-                                    <option value="card">Card</option>
-                                </select>
-                            </div>
-                            <div class="col">
-
-                                <div class="mb-3 d-none" id="bkashInput">
-                                    <label for="transactionId" class="form-label">Transaction ID</label>
-                                    <input type="text" class="form-control" id="transactionId" name="transactionId"
-                                        required>
-                                </div>
-
-                                <div class="mb-3 d-none" id="cardInput">
-                                    <label for="cardLastDigits" class="form-label">Laast 4 digit of Card</label>
-                                    <input type="text" class="form-control" id="cardLastDigits" name="cardLastDigits"
-                                        required>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                         <div id="invoiceStaff" class="text-center text-danger fs-4 my-2">
 
@@ -189,14 +161,15 @@
                                 <span id="mobile_number_error" style="color: red;"></span>
                             </div>
                         </div>
-                        <div class="form-row my-2 d-print-none">
+                        <div class="form-row my-2 d-print-none staffname d-none">
                             <div class="form-group col-md-6 col-sm-6">
                                 <div>
                                     <label for="staffs">Staff Name</label>
                                     <select name="staffs" id="staffs" class="form-control select2">
                                         <option value="0">Customer</option>
+                                       
                                         @foreach ($staffs as $staff)
-                                            <option value="{{ $staff->id }}"
+                                            <option class="" value="{{ $staff->id }}"
                                                 data-sname="{{ $staff->name }}-{{ $staff->employeeId }}">
                                                 {{ $staff->name }} -
                                                 {{ $staff->employeeId }}
@@ -224,6 +197,35 @@
                                 {{ Auth::user()->name }}
                             @endif
 
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 d-none d-print-block">
+                        <div class="col">Payment Methode: <span id="paymentMethod1">Cash</span></div>
+                        <div class="col"> <span id="transactionId1"></span></div>
+                    </div>
+                    <div class="row row-cols-2 d-print-none">
+
+                        <div class="mb-3 col">
+                            <label for="paymentMethod" class="form-label">Select Payment Method</label>
+                            <select class="form-select" id="paymentMethod" name="paymentMethod">
+                                <option value="cash">Cash</option>
+                                <option value="bkash">Bkash</option>
+                                <option value="card">Card</option>
+                            </select>
+                        </div>
+                        <div class="col">
+
+                            <div class="mb-3 d-none" id="bkashInput">
+                                <label for="transactionId" class="form-label">Transaction ID</label>
+                                <input type="text" class="form-control" id="transactionId" name="transactionId"
+                                    required>
+                            </div>
+
+                            <div class="mb-3 d-none" id="cardInput">
+                                <label for="cardLastDigits" class="form-label">Laast 4 digit of Card</label>
+                                <input type="text" class="form-control" id="cardLastDigits" name="cardLastDigits"
+                                    required>
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between">
@@ -320,7 +322,7 @@
                 }
             });
             // Set the inactivity timeout in milliseconds (e.g., 5 minutes)
-            var inactivityTimeout = 3000; // 5 minutes
+            var inactivityTimeout = 8000; // 
 
             var timeout;
 
@@ -425,7 +427,7 @@
 
                 $('.customer').removeClass('d-none');
                 let sName = $('#staffs').data('sname');
-
+                $('.staffname').addClass('d-none');
                 $('#invoiceStaff').text('');
                 $('#orders').text('');
 
@@ -443,6 +445,7 @@
                     $('#staffView').addClass('d-none');
                     $('#number').addClass('d-none');
 
+                    $('.staffname').removeClass('d-none');
                     $('.customer').addClass('d-none');
                     let sName = $('#staffs').data('sname');
 

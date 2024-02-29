@@ -17,7 +17,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th colspan="9" class="tablebtn text-end">
+                            <th colspan="11" class="tablebtn text-end">
                             </th>
                         </tr>
                         <tr>
@@ -25,6 +25,8 @@
                             <th>Table Name</th>
                             <th>Total Amount</th>
                             <th>Discount</th>
+                            <th>Payment Method</th>
+                            <th>Tranjection ID</th>
                             <th>Reason</th>
                             <th>Staff/Other</th>
                             <th>Order By</th>
@@ -40,6 +42,22 @@
                                 <td>{{ $offorder->tab->name }}</td>
                                 <td>{{ $offorder->total }}</td>
                                 <td>{{ $offorder->discount }}</td>
+                                <td>
+                                    @if ($offorder->payment)
+                                        
+                                    {{ $offorder->payment->method }}
+                                    @else
+                                        No Payment Method
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($offorder->payment)
+                                        
+                                    {{ $offorder->payment->tranjection_number }}
+                                    @else
+                                        No Tranjection Number
+                                    @endif
+                                </td>
                                 <td>{{ $offorder->reason }}</td>
                                 <td>
                                     @if ($offorder->active==1)

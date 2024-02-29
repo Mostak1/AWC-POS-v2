@@ -108,7 +108,6 @@ Route::resources([
     'purchase' => PurchaseController::class,
     'role' => RoleController::class,
     'urole' => UserRoleController::class,
-  
     'customer' => CustomerController::class
 ]);
 

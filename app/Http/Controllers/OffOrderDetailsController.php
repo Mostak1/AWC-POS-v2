@@ -79,5 +79,6 @@ class OffOrderDetailsController extends Controller
         if (OffOrderDetails::destroy($offOrderDetails->id)) {
             return back()->with('success', $offOrderDetails->id . ' Deleted!!!!');
         }
+        return back()->with('error', $offOrderDetails->id . 'Not Deleted!!!!');
     }
 }
