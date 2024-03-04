@@ -6,7 +6,8 @@
         @media print {
 
             table,
-            .ptext {
+            .ptext,
+            .r-text {
                 font-size: 8pt;
                 margin-bottom: 1px;
                 font-weight: 900;
@@ -40,7 +41,7 @@
     <div id="print" class="card p-2">
         <div class=" d-print-block">
             <div class="fs-3 text-center r-heading">GREEN KITCHEN</div>
-            <div class="r-text text-center">Islam Tower,2nd Floor,102 Shukrabad,Dhanmondi-32,Dhaka-1207 <br>
+            <div class="r-text  text-center">Islam Tower,2nd Floor,102 Shukrabad,Dhanmondi-32,Dhaka-1207 <br>
                 Phone#
                 01979756069
             </div>
@@ -70,7 +71,7 @@
                 </div>
             </div>
         </div>
-        <div class="row row-cols-1  d-print-block">
+        <div class="row row-cols-1 r-text  d-print-block">
             <div class="col">Payment Methode: {{ $payMethod }}</div>
             <div class="col"> <span id="transactionId1"></span></div>
         </div>
