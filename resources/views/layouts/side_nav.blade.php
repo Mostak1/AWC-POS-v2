@@ -67,6 +67,10 @@
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-martini-glass-citrus"></i></div>
                         Customer Card
                     </a>
+                    <a class="nav-link" href="{{ url('discounts') }}">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-martini-glass-citrus"></i></div>
+                        Discount Set
+                    </a>
                 @endif
                 @if ($user->can('order'))
                     <a class="nav-link" href="{{ url('order') }}">

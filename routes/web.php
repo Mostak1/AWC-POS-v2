@@ -5,6 +5,7 @@ use App\Http\Controllers\CardProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerPrepaidCardController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MenuController;
@@ -72,9 +73,6 @@ Route::get('/catorder', function () {
     return view('offorder.catorder', compact('cats'));
 })->name('catorder');
 
-
-
-
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -108,7 +106,8 @@ Route::resources([
     'purchase' => PurchaseController::class,
     'role' => RoleController::class,
     'urole' => UserRoleController::class,
-    'customer' => CustomerController::class
+    'customer' => CustomerController::class,
+    'discounts' => DiscountController::class,
 ]);
 
 });

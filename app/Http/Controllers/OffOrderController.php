@@ -83,7 +83,7 @@ class OffOrderController extends Controller
             $payment->cash = $request->paymentMethod === 'cash' ? 1 : 0;
             $payment->e_cash = in_array($request->paymentMethod, ['bkash', 'card']) ? 1 : 0;
             $payment->method = $request->paymentMethod;
-            $payment->total = $request->totalbill;
+            $payment->total = $request->totalbill-$request->discount;
 
             // Set transaction number only for 'bkash' payments
             if ($request->paymentMethod === 'bkash' || $request->paymentMethod === 'card') {

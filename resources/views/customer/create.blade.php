@@ -27,7 +27,7 @@
                 <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="email" class="form-label">Email :</label>
                     {!! Form::text('email', null, [
-                        'required',
+                        
                         'class' => 'form-control form-control-profile',
                         'id' => 'email',
                         'placeholder' => 'Email',
@@ -52,9 +52,17 @@
                     ]) !!}
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
+                    <label for="discount_id" class="control-label">Discount Policy:</label>
+                    {!! Form::select('discount_id', $discount, null, [
+                        'required',
+                        'class' => 'form-control',
+                        'id' => 'discount_id',
+                    ]) !!}
+                </div>
+                <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="menu_id" class="control-label">Menu :</label>
                     {!! Form::select('menu_id', $menu, null, [
-                        'required',
+                       
                         'class' => 'form-control',
                         'id' => 'menu_id',
                         'placeholder' => 'Menu',
@@ -70,7 +78,7 @@
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="total_meal" class="control-label">Total Meal :</label>
-                    {!! Form::number('total_meal', 12, [
+                    {!! Form::number('total_meal', 0, [
                         'required',
                         'class' => 'form-control form-control-profile',
                         'id' => 'total_meal',

@@ -14,6 +14,7 @@
                 font-family: "Oswald", sans-serif;
                 font-optical-sizing: auto;
                 font-style: normal;
+            
             }
 
             th,
@@ -22,8 +23,6 @@
                 height: 4px;
 
             }
-
-
 
             @page {
                 margin: 0.2in;
@@ -40,7 +39,7 @@
 
     <div id="print" class="card p-2">
         <div class=" d-print-block">
-            <div class="fs-3 text-center r-heading">GREEN KITCHEN</div>
+            <div class="fs-4 text-center r-heading">GREEN KITCHEN</div>
             <div class="r-text  text-center">Islam Tower,2nd Floor,102 Shukrabad,Dhanmondi-32,Dhaka-1207 <br>
                 Phone#
                 01979756069
@@ -66,7 +65,7 @@
 
             </div>
             <div class="d-flex justify-content-between my-2">
-                <div class="fs-2 font-weight-bold">Paid</div>
+                <div class="fs-4 font-weight-bold">Paid</div>
                 <div class="r-text">Invoice ID: 000{{ $invoice }}
                 </div>
             </div>
@@ -178,12 +177,12 @@
             <span id="discount">0</span>
             <span>TK</span>
         </div> --}}
-        <div>
+        <div class="r-text">
             <span>GROSS Total: {{ $total }} </span>
             <span id="total-order2"></span>
             <span>TK</span>
         </div>
-        <div>
+        <div class="r-text">
             @if ($total > $total - $discount)
                 <div class="div">20% Discount Applied</div>
             @endif
@@ -192,8 +191,8 @@
             <span>TK</span>
         </div>
 
-        <div class="aw-ul text-center">----------------</div>
-        <div class=" d-print-block">
+        <div class="aw-ul r-text text-center">----------------</div>
+        <div class="r-text d-print-block text-center">
             THANK YOU, COME AGAIN <br> Print By:
             @if (Auth::Check())
                 {{ Auth::user()->name }}

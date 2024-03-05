@@ -3,9 +3,9 @@
     <div class="card card-hover shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h4 class="m-0 font-weight-bold text-info">List of Food Category</h4>
+            <h4 class="m-0 font-weight-bold text-info">List of Discount Policy</h4>
             <div class="">
-                <a class="btn btn-sm btn-info" href="{{ url('customer/create') }}">
+                <a class="btn btn-sm btn-info" href="{{ url('discounts/create') }}">
                     <i class="fa-solid fa-plus"></i>
                     Add
                 </a>
@@ -23,16 +23,8 @@
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Discount Policy</th>
-                            {{-- <th>Card Number</th>
-                            <th>Card Validity</th>
-                            <th>Card Activation</th>
-                            <th>Card Status</th>
-                            <th>Menu</th>
-                            <th>Total Meal</th>
-                            <th>Consumed Meal</th> --}}
+                            <th>Discount(%)</th>
+                            <th>Discount(Fixed)</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -41,34 +33,27 @@
                         @foreach ($items as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->user->name }}</td>
-                                <td>{{ $item->user->email }}</td>
-                                <td>{{ $item->mobile}}</td>
-                                <td>{{ $item->discount->name}}</td>
-                                {{-- <td>{{ $item->card_number }}</td>
-                                <td>{{ $item->valid_date }}</td>
-                                <td>{{ $item->active_date }}</td>
-                                <td>{{ $item->card_status }}</td> --}}
-                                {{-- <td>{{ $item->menu->name }}</td> --}}
-                                {{-- <td>{{ $item->total_meal }}</td>
-                                <td>{{ $item->consumed_meal }}</td> --}}
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->discount }}</td>
+                                <td>{{ $item->fixed }}</td>
                                 <td class="">
                                     <div class="skip d-flex justify-content-center">
 
 
-                                        {!! Form::open(['method' => 'delete', 'route' => ['customer.destroy', $item->id], 'id' => 'deleteform']) !!}
-                                        <a href="javascript:void(0)" class="btn btn-danger  btn-sm" title="Delete"
-                                            onclick="event.preventDefault();if (!confirm('Are you sure?')) return; document.getElementById('deleteform').submit();">
+                                        {!! Form::open(['method' => 'delete', 'route' => ['discounts.destroy', $item->id], 'class' => 'delete-form']) !!}
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete"
+                                           >
                                             <i class="fa-solid fa-trash-can"></i>
-                                        </a>
+                                        </button>
                                         {!! Form::close() !!}
+
                                         &nbsp;
-                                        <a href="{{ url('customer/' . $item->id . '/edit') }}" class="btn btn-info  btn-sm"
+                                        <a href="{{ url('discounts/' . $item->id . '/edit') }}" class="btn btn-info  btn-sm"
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         &nbsp;
-                                        <a href="{{ url('customer/' . $item->id) }}" class="btn btn-info  btn-sm"
+                                        <a href="{{ url('discounts/' . $item->id) }}" class="btn btn-info  btn-sm"
                                             title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -81,8 +66,30 @@
             </div>
         </div>
     </div>
-    
 @endsection
 
 @section('script')
+    <script>
+        // JavaScript code to submit the form with SweetAlert
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If user confirms, submit the form
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

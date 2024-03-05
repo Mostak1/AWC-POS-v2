@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Discount;
 use App\Models\Menu;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $items = Customer::with('menu', 'user')->get();
+        $items = Customer::with('menu', 'user','discount')->get();
         return view('customer.index', compact('items'));
     }
 
@@ -24,19 +25,31 @@ class CustomerController extends Controller
     public function create()
     {
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
-        return view('customer.create', compact('menu'));
+        $discount = Discount::pluck('name', 'id');
+        return view('customer.create', compact('menu','discount'));
     }
+    public function uniqueEmail()
+    {
+        do {
+            // Generate a random email address
+            $randomEmail = Str::random(10) . '@gmail.com';
+            
+            // Check if the email already exists in the database
+            $existingUser = User::where('email', $randomEmail)->first();
+        } while ($existingUser);
 
+        return $randomEmail;
+    }
     public function store(Request $request)
     {
         $request->validate([
             // 'name' => ['required','regex:\b[A-Za-z]\w*\b', 'string','min:3' ,'max:255'],
             'name' => ['required','string','min:3' ,'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'email' => [ 'max:255', 'unique:'.User::class],
         ]);
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $request->email ?? $this->uniqueEmail(),
             'password' => Hash::make(12345678),
         ]);
 
@@ -45,6 +58,7 @@ class CustomerController extends Controller
             $thirtyDaysAgo = Carbon::now()->addDays(31);
             $data = [
                 'user_id' => $user->id,
+                'discount_id' => $request->discount_id,
                 'mobile' => $request->mobile,
                 'address' => $request->address,
                 'card_number' => 'green' . Str::random(7),
