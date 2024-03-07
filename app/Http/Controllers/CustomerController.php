@@ -8,8 +8,10 @@ use App\Models\Menu;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class CustomerController extends Controller
 {
@@ -26,13 +28,18 @@ class CustomerController extends Controller
     {
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
         $discount = Discount::pluck('name', 'id');
-        return view('customer.create', compact('menu','discount'));
+        // $places = DB::table('places')->select('place_name', 'id')->get();
+        $places = DB::table('places')->pluck('place_name as name', 'id');
+        
+        return view('customer.create', compact('menu','discount','places'));
     }
     public function uniqueEmail()
     {
         do {
+            $faker = Faker::create();
             // Generate a random email address
-            $randomEmail = Str::random(10) . '@gmail.com';
+            // $randomEmail = Str::random(10) . '@gmail.com';
+            $randomEmail = $faker->firstName . '@gmail.com';
             
             // Check if the email already exists in the database
             $existingUser = User::where('email', $randomEmail)->first();
@@ -43,8 +50,9 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // 'name' => ['required','regex:\b[A-Za-z]\w*\b', 'string','min:3' ,'max:255'],
+            'card_status' => ['required'],
             'name' => ['required','string','min:3' ,'max:255'],
+            'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
             'email' => [ 'max:255', 'unique:'.User::class],
         ]);
         $user = User::create([
@@ -60,7 +68,7 @@ class CustomerController extends Controller
                 'user_id' => $user->id,
                 'discount_id' => $request->discount_id,
                 'mobile' => $request->mobile,
-                'address' => $request->address,
+                'address' =>$request->place .','.$request->address ?? 'No Address',
                 'card_number' => 'green' . Str::random(7),
                 'valid_date' => $thirtyDaysAgo,
                 'active_date' => $currentDate,
@@ -89,8 +97,9 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
+        $discount = Discount::pluck('name', 'id');
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
-        return view('customer.edit', compact('customer','menu'));
+        return view('customer.edit', compact('customer','menu','discount'));
         //
     }
 
@@ -99,20 +108,33 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
+        $request->validate([
+            'card_status' => ['required'],
+            // 'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
+        ]);
         $currentDate = Carbon::now();
             $thirtyDaysAgo = Carbon::now()->addDays(31);
-            $data = [
-                'mobile' => $request->mobile,
-                'address' => $request->address,
-                // 'valid_date' => $thirtyDaysAgo,
-                // 'active_date' => $currentDate,
-                'card_status' => $request->card_status,
-                'total_meal' => $request->total_meal,
-                'menu_id' => $request->menu_id
-            ];
-            $customer->update($data);
+            if ($request->mobile) {
+                $customer->mobile=$request->mobile;
+            }
+            if ($request->address) {
+                $customer->address=$request->address;
+            }
+            if ($request->card_status) {
+                $customer->card_status=$request->card_status;
+            }
+            if ($request->total_meal) {
+                $customer->total_meal=$request->total_meal;
+            }
+            if ($request->menu_id) {
+                $customer->menu_id=$request->menu_id;
+            }
+            if ($request->discount_id) {
+                $customer->discount_id=$request->discount_id;
+            }
+           
         if ($customer->save()) {
-            return back()->with('success', "Update Successfully!");
+            return redirect()->route('customer.index')->with('success', "Update Successfully!");
         } else {
             return back()->with('error', "Update Failed!");
         }

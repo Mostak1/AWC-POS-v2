@@ -61,7 +61,7 @@
                     </div>
                     <div class="card  mb-1">
                         <div class="card-header">
-                            <div class="row row-cols-4 row-cols-md-6 g-3">
+                            <div class="row  g-2">
 
                                 @foreach ($cats as $item)
                                     <div class="col">
@@ -124,7 +124,31 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="my-2 d-print-none staffname text-center">
+                            <div class="form-group">
+                                <div>
+                                    {{-- <label for="staffs">Staff Name</label> --}}
+                                    <select name="staffs" id="staffs" class="form-control select2">
+                                        <option data-mobile="0" data-active="1" data-sname="Walk In Customer" value="0">Walk In Customer</option>
+                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="0">Pathao</option>
+                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="0">Food Panda</option>
+                                        <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
+
+                                        @foreach ($customers as $customer)
+                                            <option data-mobile="{{ $customer->mobile }}" class="customer"
+                                                value="{{ $customer->discount->discount }}"
+                                                data-discount="{{ $customer->discount->discount }}"
+                                                data-active="{{ $customer->card_status }}"
+                                                data-sname="{{ $customer->user->name }}">
+                                                {{ $customer->user->name }} -
+                                                {{ $customer->mobile }} -
+                                                {{ $customer->discount->discount }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
                         <div id="invoiceStaff" class="text-center text-danger fs-4 my-2">
 
@@ -155,34 +179,29 @@
                             <span id="total-order"></span>
                             <span>TK</span>
                             <div class="d-print-none">
-                                <button type="button" class="my-2 btn btn-outline-success" id="allowDiscount">Apply Discount</button>
-                                <input type="text" id="number" class="d-none form-control w-50"
-                                    placeholder="Input Customer Mobile Number">
-                                <span id="mobile_number_error" style="color: red;"></span>
-                            </div>
-                        </div>
-                        <div class="form-row my-2 d-print-none staffname d-none">
-                            <div class="form-group col-md-6 col-sm-6">
-                                <div>
-                                    <label for="staffs">Staff Name</label>
-                                    <select name="staffs" id="staffs" class="form-control select2">
-                                        <option value="0">Customer</option>
-                                       
-                                        @foreach ($staffs as $staff)
-                                            <option class="" value="{{ $staff->id }}"
-                                                data-sname="{{ $staff->name }}-{{ $staff->employeeId }}">
-                                                {{ $staff->name }} -
-                                                {{ $staff->employeeId }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="row row-cols-2 g-2">
+                                    <div class="col">
+                                        {{-- <input type="text" id="number" class="form-control" placeholder="01752243665"> --}}
+                                        <select class="form-control" name="oneTimeDiscount" id="oneTimeDiscount">
+                                            <option value="">One Time Discount</option>
+                                            <option value="5">5%</option>
+                                            <option value="10">10%</option>
+                                            <option value="15">15%</option>
+                                            <option value="20">20%</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" id="reason" class="form-control"
+                                            placeholder="Input Reason">
+                                    </div>
                                 </div>
+                                <button type="button" class="my-2 btn btn-outline-success" id="allowDiscount">Apply
+                                    Discount</button>
                             </div>
                         </div>
-                        <div class="">
-                            
-                            <span id="discount" class="d-none">20% Discount Applied</span>
-                            
+
+                        <div id="discountComment">
+
                         </div>
                         <div>
                             <span>Ammount to Pay: </span>
@@ -232,13 +251,13 @@
 
                         <button class="btn btn-outline-danger pnone mt-5" id="submitp">Submit Order</button>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-outline-info pnone mt-5" data-bs-toggle="modal"
+                        {{-- <button type="button" class="btn btn-outline-info pnone mt-5" data-bs-toggle="modal"
                             data-bs-target="#exampleModal" id="staffView">
                             Go TO Staff View
                         </button>
                         <button type="button" class="btn btn-outline-info mt-5 d-none" id="customerView">
                             <i class="fa-solid fa-backward fa-fade"></i> Back
-                        </button>
+                        </button> --}}
 
                     </div>
                 </div>
@@ -354,14 +373,17 @@
                                         class="card-img-top" alt="${ menu.image }">
                                     <div class="card-body">
                                         <span class="id d-none">${ menu.id }</span>
-                                        <h5 class="card-title name">${ menu.name }</h5>
+                                        <h5 class="card-title name ${menu.quantity < 5 ? 'text-danger' : ''}">${ menu.name }</h5>
                                         <div class="card-text ">
                                             <div class="d-none text-decoration-line-through">
                                                 <span>Price: </span><span class="discount"> ${ menu.price }</span>TK
                                                 </div>
-                                           <div>
-                                            <span>Price:</span>
-                                            <span  class="price customer"> ${menu.price }</span>
+                                           <div class="d-flex justify-content-between">
+                                            <div>
+                                                <span>Price:</span>
+                                                <span  class="price customer"> ${menu.price }</span>
+                                            </div>
+                                            
                                             </div>
                                             
                                         </div>
@@ -374,7 +396,10 @@
                         `;
 
                     q += html;
-
+                    // <div class="${menu.quantity < 5 ? 'text-danger' : ''}">
+                    //                             <span>Stock: </span>
+                    //                             <span> ${menu.quantity}</span>
+                    //                         </div>
                 });
                 quizzes.forEach(menu => {
                     let html = '';
@@ -443,7 +468,7 @@
 
                     $('#customerView').removeClass('d-none');
                     $('#staffView').addClass('d-none');
-                    $('#number').addClass('d-none');
+
 
                     $('.staffname').removeClass('d-none');
                     $('.customer').addClass('d-none');
@@ -720,55 +745,56 @@
                     subtotal += (price * quantity);
                 });
 
-                $('#total-order').text(subtotal.toFixed(2));
+                $('#total-order').text(subtotal.toFixed(0));
             }
 
             $('#allowDiscount').click(function() {
-               $('#number').toggleClass('d-none');
-            })
+
+                payAmount();
+            });
 
             function payAmount() {
                 var tbill = parseFloat($('#total-order').text());
                 var tax = parseFloat($('#tax').text());
-                // var dis = parseFloat($('#discount').text());
-                var mobileNumber = $('#number').val(); // Assuming the mobile number input field has an id of 'number'
-                // Regular expression pattern to match mobile numbers starting with "01" and of length 11
-                var pattern = /^01[0-9]{9}$/;
-                if (pattern.test(mobileNumber)) {
-                    var num = tbill - 0.2 * tbill; // Assuming you want to apply a 20% discount
-                    $('#total-order2').text(num.toFixed(2)); // Update the total order amount
-                    $('#discount').removeClass('d-none');
+                // alert('Pay amount');
+
+                var staffDis = $('#staffs').val();
+                var oneDis = $('#oneTimeDiscount').val();
+                if (oneDis > staffDis) {
+
+                    var prediscount =tbill*oneDis * 0.01;
                 } else {
-                    $('#total-order2').text(tbill.toFixed(2)); // Update the total order amount without discount
+
+                    var prediscount = tbill*staffDis * 0.01;
                 }
+                var discount = prediscount.toFixed(0);
+                var num = tbill - discount; // Assuming you want to apply a 20% discount
+                $('#total-order2').text(num); // Update the total order amount
+                $('#discountPer').text(staffDis);
+                $('#discountComment').text(discount + ' Tk Discount Apply');
+
+                // var pattern = /^\\+8801[0-9]{9}$/;
+                // if (pattern.test(mobileNumber)) {
+                // } else {
+                //     $('#total-order2').text(tbill.toFixed(2)); // Update the total order amount without discount
+                // }
             }
 
             // order Submitted
-            $('#number').on('input', function() {
-                var mobileNumber = $(this).val();
-                // Regular expression pattern to match mobile numbers starting with "01" and of length 11
-                var pattern = /^01[0-9]{9}$/;
-                if (pattern.test(mobileNumber)) {
-                    $('#mobile_number_error').text('');
-                    payAmount();
-                } else {
-                    $('#mobile_number_error').text(
-                        'Mobile number must start with "01" and have a length of 11 characters.'
-                    );
-                    return;
-                }
+            $('#staffs').on('change', function() {
+                payAmount();
             });
             $('#submitp').click(function() {
-                var number = $('#number').val();
-                var pattern = /^01[0-9]{9}$/;
-                if (!number == "" && !pattern.test(number)) {
+                var totalbill = $('#total-order').text();
+                var paybill = $('#total-order2').text();
+                var reason = $('#reason').val();
+                if (totalbill > paybill && reason == "") {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Check Customer Mobile Number',
-                        showCancelButton: true,
+                        title: 'Input Reason First' + totalbill + 'pay'+paybill,
+                        showCancelButton: false,
                         showConfirmButton: true,
                         confirmButtonText: 'OK',
-                        cancelButtonText: 'Cancel',
                         customClass: {
                             confirmButton: 'btn btn-primary'
                         }
@@ -777,8 +803,7 @@
                 }
 
                 var items = [];
-                var totalbill = $('#total-order').text();
-                var paybill = $('#total-order2').text();
+
                 // var discount = $('#discount').text();
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
@@ -787,6 +812,8 @@
 
                 // Get the values of the 'data-sname' attribute and the text content
                 let sNameAttribute = selectedOption.data('sname');
+                let mobileAttr = selectedOption.data('mobile');
+                let activeAttr = selectedOption.data('active');
                 let sNameText = selectedOption.text();
                 if (sInvoice === "Staff-Invoice" && staff === 0) {
 
@@ -807,7 +834,7 @@
                 var selectedMethod = $("#paymentMethod").val();
 
                 if (selectedMethod === "cash") {
-                    Swal.fire("Processing cash payment");
+                   true
                 } else if (selectedMethod === "bkash") {
                     var transactionId = $("#transactionId").val();
                     if (transactionId.trim() === "") {
@@ -874,11 +901,10 @@
                     type: 'POST',
                     data: {
                         items: items,
-                        number: number,
                         totalbill: totalbill,
-                        discount: totalbill-paybill,
-                        reason: sNameText,
-                        staff: staff,
+                        discount: totalbill - paybill,
+                        reason: sNameAttribute+'-'+mobileAttr+'-' + reason,
+                        active: activeAttr,
                         paymentMethod: selectedMethod,
                         transactionId: transactionId || cardLastDigits || 'Cash',
                     },

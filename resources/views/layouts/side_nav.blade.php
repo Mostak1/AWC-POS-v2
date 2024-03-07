@@ -65,11 +65,11 @@
                 @if ($user->can('customer.index'))
                     <a class="nav-link" href="{{ url('customer') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-martini-glass-citrus"></i></div>
-                        Customer Card
+                        Discount Apply on Customer 
                     </a>
                     <a class="nav-link" href="{{ url('discounts') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-martini-glass-citrus"></i></div>
-                        Discount Set
+                        Discount Policy
                     </a>
                 @endif
                 @if ($user->can('order'))

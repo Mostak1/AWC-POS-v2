@@ -63,20 +63,21 @@ class OffOrderController extends Controller
             $order->total = $request->totalbill;
             $order->discount = $request->discount;
             $order->reason = $request->reason;
-            if ($request->reason == 'Customer') {
-                $order->active = 1;
-            } else {
-                $order->active = 2;
-            }
+            $order->active = $request->active;
+            // if ($request->reason == 'Customer') {
+            //     $order->active = 1;
+            // } else {
+            //     $order->active = 2;
+            // }
 
             $order->save();
-            if ($request->number !== null) {
-                # code...
-                $token = new CustomerToken();
-                $token->mobile = $request->number;
-                $token->order_id = $order->id;
-                $token->save();
-            }
+            // if ($request->number !== null) {
+            //     # code...
+            //     $token = new CustomerToken();
+            //     $token->mobile = $request->number;
+            //     $token->order_id = $order->id;
+            //     $token->save();
+            // }
 
             $payment = new Payment();
             $payment->order_id = $order->id;
@@ -136,6 +137,7 @@ class OffOrderController extends Controller
     public function edit(OffOrder $offorder)
     {
         $tabs = Tab::pluck('name', 'id');
+        $payMethod = Payment::where('order_id', $offorder->id)->first();
         return view('offorder.edit', compact('offorder'))->with('tabs', $tabs)->with('user', Auth::user());
     }
 

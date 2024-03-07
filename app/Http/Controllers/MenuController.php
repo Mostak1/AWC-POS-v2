@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Menulog;
 use App\Models\OffOrder;
 use App\Models\Staff;
@@ -33,13 +34,13 @@ class MenuController extends Controller
 
     public function order()
     {
-
         $lastOrderId = OffOrder::orderBy('id', 'DESC')->value('id');
         $cats = Category::get();
         $staffs= Staff::get();
+        $customers = Customer::with('menu', 'user','discount')->get();
 
         $menus = Menu::with(['category', 'subcategory'])->paginate(12);
-        return view('offorder.order', compact('menus', 'lastOrderId', 'cats','staffs'))->with('user', Auth::user());
+        return view('offorder.order', compact('menus','customers', 'lastOrderId', 'cats','staffs'))->with('user', Auth::user());
     }
     public function menu()
     {

@@ -53,10 +53,10 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         &nbsp;
-                                        <a href="{{ url('discounts/' . $item->id) }}" class="btn btn-info  btn-sm"
+                                        {{-- <a href="{{ url('discounts/' . $item->id) }}" class="btn btn-info  btn-sm"
                                             title="View">
                                             <i class="fas fa-eye"></i>
-                                        </a>
+                                        </a> --}}
                                     </div>
                                 </td>
                             </tr>

@@ -26,10 +26,10 @@
                             <th>Email</th>
                             <th>Mobile</th>
                             <th>Discount Policy</th>
+                            <th>Status</th>
                             {{-- <th>Card Number</th>
                             <th>Card Validity</th>
                             <th>Card Activation</th>
-                            <th>Card Status</th>
                             <th>Menu</th>
                             <th>Total Meal</th>
                             <th>Consumed Meal</th> --}}
@@ -43,12 +43,24 @@
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->user->name }}</td>
                                 <td>{{ $item->user->email }}</td>
-                                <td>{{ $item->mobile}}</td>
-                                <td>{{ $item->discount->name}}</td>
+                                <td>{{ $item->mobile }}</td>
+                                <td>{{ $item->discount->name }}</td>
                                 {{-- <td>{{ $item->card_number }}</td>
                                 <td>{{ $item->valid_date }}</td>
-                                <td>{{ $item->active_date }}</td>
-                                <td>{{ $item->card_status }}</td> --}}
+                                <td>{{ $item->active_date }}</td> --}}
+                                <td>
+                                    @if ($item->card_status == 1)
+                                        Customer
+                                    @elseif($item->card_status == 2)
+                                        Staff
+                                    @elseif($item->card_status == 3)
+                                        Pathao
+                                    @elseif($item->card_status == 4)
+                                        Food Panda
+                                    @elseif($item->card_status == 5)
+                                        Chairman Sir
+                                    @endif
+                                </td>
                                 {{-- <td>{{ $item->menu->name }}</td> --}}
                                 {{-- <td>{{ $item->total_meal }}</td>
                                 <td>{{ $item->consumed_meal }}</td> --}}
@@ -68,10 +80,10 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         &nbsp;
-                                        <a href="{{ url('customer/' . $item->id) }}" class="btn btn-info  btn-sm"
+                                        {{-- <a href="{{ url('customer/' . $item->id) }}" class="btn btn-info  btn-sm"
                                             title="View">
                                             <i class="fas fa-eye"></i>
-                                        </a>
+                                        </a> --}}
                                     </div>
                                 </td>
                             </tr>
@@ -81,7 +93,6 @@
             </div>
         </div>
     </div>
-    
 @endsection
 
 @section('script')

@@ -18,7 +18,7 @@
                 <th scope="col">Email</th>
                 <th scope="col" width="10%">Username</th>
               
-                {{-- <th scope="col" width="1%" >Action</th>     --}}
+                <th scope="col" width="1%" >Action</th>    
             </tr>
             </thead>
             <tbody>
@@ -29,13 +29,13 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->username }}</td>
                        
-                        {{-- <td>
+                        <td>
                             <div class="skip d-flex justify-content-center">
                                 
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm">Edit</a>
                             </div>
                         </td>
-                         --}}
+                        
                     </tr>
                 @endforeach
             </tbody>

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('consumed_meal')->nullable();
             $table->bigInteger('menu_id')->unsigned()->nullable();
             $table->foreign('menu_id')->references('id')->on('menus');
-            $table->set('card_status',['ACTIVE','SUSPEND','BLOCKED'])->nullable();
+            $table->integer('card_status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
