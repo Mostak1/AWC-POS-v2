@@ -97,13 +97,29 @@ class HomeController extends Controller
         $orderDetails = OffOrderDetails::with('menu', 'off_order')->whereDate('created_at', $currentDate)->get();
 
         $categories = Category::get();
-        // $items = OffOrderDetails::with(['offorder.user', 'menu'])->whereDate('created_at', $currentDate)->get();
+        $ipdDis = OffOrder::whereDate('created_at', $currentDate)->where('active', 6)->sum('discount');
+        $ipdSale = OffOrder::whereDate('created_at', $currentDate)->where('active', 6)->sum('total');
+        $foodPandaSale = OffOrder::whereDate('created_at', $currentDate)->where('active', 4)->sum('total');
+        $pathaoSale = OffOrder::whereDate('created_at', $currentDate)->where('active', 3)->sum('total');
+        $chairmanDis = OffOrder::whereDate('created_at', $currentDate)->where('active', 5)->sum('discount');
+       
 
-        // return view('offorder.dailyreport', compact('items',card 'orderCountD', 'totalSalesD', 'totalDisD'));
-
-        // dd($role);
-
-        return view('dashboard', compact('orderCountDstaff', 'totalDisM', 'totalDisD', 'totalDisW', 'items', 'orderDetails', 'bkash', 'card', 'cash', 'categories'))
+        return view('dashboard', compact(
+            'chairmanDis',
+            'pathaoSale',
+            'foodPandaSale',
+            'ipdSale',
+            'orderCountDstaff',
+            'totalDisM',
+            'totalDisD',
+            'totalDisW',
+            'items',
+            'orderDetails',
+            'bkash',
+            'card',
+            'cash',
+            'categories'
+        ))
             ->with('orderCountD', $orderCountD)
             ->with('totalSalesD', $totalSalesD)
             ->with('salesCountD', $salesCountD)
@@ -137,9 +153,6 @@ class HomeController extends Controller
         // Get current date "2024-02-13"
         $selectedDate = $request->date ??  $currentDate;
 
-        // Single Data 
-        $customerSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 1)->sum('total');
-        $staffSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 2)->sum('total');
 
 
         $orderCountD = OffOrder::whereDate('created_at', $selectedDate)->count();
@@ -161,71 +174,194 @@ class HomeController extends Controller
 
 
         // Fetch orders data
-        $data = OffOrderDetails::with('menu.category', 'off_order.payment')->get();
+        $data = OffOrderDetails::with('menu.category', 'off_order.payment')->whereDate('created_at', $selectedDate)->get();
 
         // Filter and aggregate data
         $staffData = [];
+        // Single Data 
+        $staffDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 2)->sum('discount');
+        $staffSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 2)->sum('total');
+
         foreach ($data as $order) {
             $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
 
             // Check if the order date matches the selected date and the order is not active
-            if ($orderDate !== $selectedDate || $order->off_order->active == 1) {
-                continue;
-            }
+            if ($order->off_order->active == 2) {
+                $menuId = $order->menu_id;
+                $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
+                $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
 
-            $menuId = $order->menu_id;
-
-            // Calculate discounts
-            $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
-            $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
-
-            // If menu id is not in staffData, add it; otherwise, update quantity and total
-            if (!isset($staffData[$menuId])) {
-                $staffData[$menuId] = [
-                    'menuName' => $order->menu->name,
-                    'category' => $order->menu->category->name,
-                    'date' => $order->created_at,
-                    'quantity' => $order->quantity,
-                    'price' => $sDiscount,
-                    'total' => $order->total,
-                ];
-            } else {
-                $staffData[$menuId]['quantity'] += $order->quantity;
-                $staffData[$menuId]['total'] += $order->total;
+                // If menu id is not in staffData, add it; otherwise, update quantity and total
+                if (!isset($staffData[$menuId])) {
+                    $staffData[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $order->menu->price,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $staffData[$menuId]['quantity'] += $order->quantity;
+                    $staffData[$menuId]['total'] += $order->total;
+                }
             }
         }
         // Filter and aggregate data
         $customerData = [];
+        // Single Data 
+        $customerSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 1)->sum('total');
+        $customerDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 1)->sum('discount');
+
         foreach ($data as $order) {
             $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
 
             // Check if the order date matches the selected date and the order is not active
-            if ($orderDate !== $selectedDate || $order->off_order->active == 2) {
-                continue;
-            }
+            if ($order->off_order->active == 1) {
 
-            $menuId = $order->menu_id;
 
-            // Calculate discounts
-            $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
-            $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
+                $menuId = $order->menu_id;
 
-            // If menu id is not in customerData, add it; otherwise, update quantity and total
-            if (!isset($customerData[$menuId])) {
-                $customerData[$menuId] = [
-                    'menuName' => $order->menu->name,
-                    'category' => $order->menu->category->name,
-                    'date' => $order->created_at,
-                    'quantity' => $order->quantity,
-                    'price' => $cDiscount,
-                    'total' => $order->total,
-                ];
-            } else {
-                $customerData[$menuId]['quantity'] += $order->quantity;
-                $customerData[$menuId]['total'] += $order->total;
+                // Calculate discounts
+                $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
+                $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
+
+                // If menu id is not in customerData, add it; otherwise, update quantity and total
+                if (!isset($customerData[$menuId])) {
+                    $customerData[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $cDiscount,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $customerData[$menuId]['quantity'] += $order->quantity;
+                    $customerData[$menuId]['total'] += $order->total;
+                }
             }
         }
-        return view('report.dailyreport', compact('staffSale', 'customerSale', 'customerData', 'staffData', 'bkash', 'card', 'cash', 'orderCountD', 'totalSalesD', 'selectedDate'));
+        $foodPanda = [];
+        $foodPandaDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 4)->sum('discount');
+        $foodPandaSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 4)->sum('total');
+        foreach ($data as $order) {
+            if ($order->off_order->active == 4) {
+                $menuId = $order->menu_id;
+                if (!isset($foodPanda[$menuId])) {
+                    $foodPanda[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $order->menu->price,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $foodPanda[$menuId]['quantity'] += $order->quantity;
+                    $foodPanda[$menuId]['total'] += $order->total;
+                }
+            }
+        }
+
+        $pathao = [];
+        $pathaoDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 3)->sum('discount');
+        $pathaoSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 3)->sum('total');
+        foreach ($data as $order) {
+            $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
+
+            // Check if the order date matches the selected date and the order is not active
+            if ($order->off_order->active == 3) {
+                $menuId = $order->menu_id;
+                if (!isset($pathao[$menuId])) {
+                    $pathao[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $order->menu->price,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $pathao[$menuId]['quantity'] += $order->quantity;
+                    $pathao[$menuId]['total'] += $order->total;
+                }
+            }
+        }
+        $chairman = [];
+        $chairmanDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 5)->sum('discount');
+        $chairmanSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 5)->sum('total');
+        foreach ($data as $order) {
+            $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
+
+            // Check if the order date matches the selected date and the order is not active
+            if ($order->off_order->active == 5) {
+                $menuId = $order->menu_id;
+                // If menu id is not in customerData, add it; otherwise, update quantity and total
+                if (!isset($chairman[$menuId])) {
+                    $chairman[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $order->menu->price,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $chairman[$menuId]['quantity'] += $order->quantity;
+                    $chairman[$menuId]['total'] += $order->total;
+                }
+            }
+        }
+        $ipd = [];
+        $ipdDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 6)->sum('discount');
+        $ipdSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 6)->sum('total');
+
+        foreach ($data as $order) {
+            if ($order->off_order->active == 6) {
+                $menuId = $order->menu_id;
+                if (!isset($ipd[$menuId])) {
+                    $ipd[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $order->menu->price,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $ipd[$menuId]['quantity'] += $order->quantity;
+                    $ipd[$menuId]['total'] += $order->total;
+                }
+            }
+        }
+        return view('report.dailyreport', compact(
+            'staffSale',
+            'staffDis',
+            'customerSale',
+            'customerDis',
+            'customerData',
+            'staffData',
+            'foodPanda',
+            'foodPandaDis',
+            'foodPandaSale',
+            'pathao',
+            'pathaoDis',
+            'pathaoSale',
+            'chairman',
+            'chairmanDis',
+            'chairmanSale',
+            'ipd',
+            'ipdSale',
+            'ipdDis',
+            'bkash',
+            'card',
+            'cash',
+            'orderCountD',
+            'totalSalesD',
+            'totalDisD',
+            'selectedDate'
+        ));
         // You can return the aggregated data to a view or as an API response
         return response()->json([
             'customerData' => $customerData,
@@ -302,6 +438,6 @@ class HomeController extends Controller
                 }
             }
         }
-        return view('receipt', compact('staffData', 'invoice', 'payMethod', 'total','discount','active'));
+        return view('receipt', compact('staffData', 'invoice', 'payMethod', 'total', 'discount', 'active'));
     }
 }

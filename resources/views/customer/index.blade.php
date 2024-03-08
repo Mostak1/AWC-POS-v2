@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h4 class="m-0 font-weight-bold text-info">List of Food Category</h4>
             <div class="">
-                <a class="btn btn-sm btn-info" href="{{ url('customer/create') }}">
+                <a class="btn btn-sm btn-info" data-toggle="modal" data-target="#ModalCreate" href="#">
                     <i class="fa-solid fa-plus"></i>
                     Add
                 </a>
@@ -93,6 +93,7 @@
             </div>
         </div>
     </div>
+    @include('customer.modal')
 @endsection
 
 @section('script')

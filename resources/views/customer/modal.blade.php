@@ -1,7 +1,9 @@
-@extends('layouts.main')
-@section('content')
-<div class="card card-hover shadow mb-4">
-    
+{{-- @extends('layouts.main')
+@section('content') --}}
+<div class="card card-hover shadow mb-4 modal fade" id="ModalCreate" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
                 <div class="card-header py-3 d-flex justify-content-between">
                     <h4 class="m-0 font-weight-bold text-info"> Add customer Informations</h4>
                     <a href="{{ url('customer') }}" class="btn btn-info  btn-sm" title="Back to Card Informations">
@@ -9,7 +11,7 @@
                     </a>
 
                 </div>
-            
+            </div>
             <div class="card-body mt-1">
                 {{ Form::open(['route' => 'customer.store', 'class' => 'user', 'enctype' => 'multipart/form-data']) }}
 
@@ -115,6 +117,8 @@
                     {!! Form::submit('Add Customer Information', ['class' => 'my-3 btn btn-info']) !!}
                 </div>
                 {!! Form::close() !!}
-      
+            </div>
+        </div>
+    </div>
 </div>
-@endsection
+{{-- @endsection --}}

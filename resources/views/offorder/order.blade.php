@@ -24,9 +24,11 @@
 
         @media print {
             @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 
             * {
-                font-family: 'Fira Mono', monospace;
+                font-family: "Oswald", sans-serif;
+                /* font-family: 'Fira Mono', monospace; */
             }
 
             .aw-ul {
@@ -38,12 +40,17 @@
             }
 
             .r-text {
-                font-size: 13px;
+                font-size: 8pt;
+                margin-bottom: 1px;
+                font-weight: 900;
+                font-family: "Oswald", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
             }
 
             @page {
 
-                margin: .4cm;
+                margin: .2cm;
             }
         }
     </style>
@@ -118,20 +125,27 @@
 
 
                             </div>
+                            <div class="row r-text row-cols-1 d-none d-print-block">
+                                <div class="col">Payment Methode: <span id="paymentMethod1">Cash</span></div>
+                                <div class="col"> <span id="transactionId1"></span></div>
+                            </div>
                             <div class="d-flex justify-content-between my-2">
                                 <div class="fs-2 font-weight-bold">Paid</div>
                                 <div class="r-text">Invoice ID: 000{{ $lastOrderId + 1 }}
                                 </div>
                             </div>
                         </div>
-                        <div class="my-2 d-print-none staffname text-center">
+                        <div class=" d-print-none staffname text-center">
                             <div class="form-group">
                                 <div>
                                     {{-- <label for="staffs">Staff Name</label> --}}
                                     <select name="staffs" id="staffs" class="form-control select2">
-                                        <option data-mobile="0" data-active="1" data-sname="Walk In Customer" value="0">Walk In Customer</option>
-                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="0">Pathao</option>
-                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="0">Food Panda</option>
+                                        <option data-mobile="0" data-active="1" data-sname="Walk In Customer"
+                                            value="0">Walk In Customer</option>
+                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="0">Pathao
+                                        </option>
+                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="0">Food
+                                            Panda</option>
                                         <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
 
                                         @foreach ($customers as $customer)
@@ -150,7 +164,7 @@
                             </div>
                         </div>
 
-                        <div id="invoiceStaff" class="text-center text-danger fs-4 my-2">
+                        <div id="invoiceStaff" class="text-center text-danger fs-4">
 
                         </div>
 
@@ -174,7 +188,7 @@
                         <div class="orders r-text" id="orders">
 
                         </div>
-                        <div class="mt-4">
+                        <div class="mt-2 r-text">
                             <span>GROSS Total: </span>
                             <span id="total-order"></span>
                             <span>TK</span>
@@ -183,7 +197,7 @@
                                     <div class="col">
                                         {{-- <input type="text" id="number" class="form-control" placeholder="01752243665"> --}}
                                         <select class="form-control" name="oneTimeDiscount" id="oneTimeDiscount">
-                                            <option value="">One Time Discount</option>
+                                            <option value="0">One Time Discount</option>
                                             <option value="5">5%</option>
                                             <option value="10">10%</option>
                                             <option value="15">15%</option>
@@ -200,17 +214,17 @@
                             </div>
                         </div>
 
-                        <div id="discountComment">
+                        <div class="r-text" id="discountComment">
 
                         </div>
-                        <div>
+                        <div class="r-text">
                             <span>Ammount to Pay: </span>
                             <span id="total-order2"></span>
                             <span>TK</span>
                         </div>
 
                         <div class="aw-ul text-center">----------------</div>
-                        <div class="d-none d-print-block">
+                        <div class="d-none r-text d-print-block">
                             THANK YOU, COME AGAIN <br> Print By:
                             @if (Auth::Check())
                                 {{ Auth::user()->name }}
@@ -218,10 +232,7 @@
 
                         </div>
                     </div>
-                    <div class="row row-cols-1 d-none d-print-block">
-                        <div class="col">Payment Methode: <span id="paymentMethod1">Cash</span></div>
-                        <div class="col"> <span id="transactionId1"></span></div>
-                    </div>
+
                     <div class="row row-cols-2 d-print-none">
 
                         <div class="mb-3 col">
@@ -758,15 +769,19 @@
                 var tax = parseFloat($('#tax').text());
                 // alert('Pay amount');
 
-                var staffDis = $('#staffs').val();
-                var oneDis = $('#oneTimeDiscount').val();
+                var staffDis = parseFloat($('#staffs').val());
+                var oneDis = parseFloat($('#oneTimeDiscount').val());
+                console.log(staffDis + oneDis);
                 if (oneDis > staffDis) {
 
-                    var prediscount =tbill*oneDis * 0.01;
-                } else {
+                    var prediscount = tbill * oneDis * 0.01;
+                } else if (oneDis < staffDis) {
 
-                    var prediscount = tbill*staffDis * 0.01;
+                    var prediscount = tbill * staffDis * 0.01;
+                } else {
+                    var prediscount = 0;
                 }
+                console.log(prediscount);
                 var discount = prediscount.toFixed(0);
                 var num = tbill - discount; // Assuming you want to apply a 20% discount
                 $('#total-order2').text(num); // Update the total order amount
@@ -791,7 +806,7 @@
                 if (totalbill > paybill && reason == "") {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Input Reason First' + totalbill + 'pay'+paybill,
+                        title: 'Input Reason First',
                         showCancelButton: false,
                         showConfirmButton: true,
                         confirmButtonText: 'OK',
@@ -834,7 +849,7 @@
                 var selectedMethod = $("#paymentMethod").val();
 
                 if (selectedMethod === "cash") {
-                   true
+                    true
                 } else if (selectedMethod === "bkash") {
                     var transactionId = $("#transactionId").val();
                     if (transactionId.trim() === "") {
@@ -903,7 +918,7 @@
                         items: items,
                         totalbill: totalbill,
                         discount: totalbill - paybill,
-                        reason: sNameAttribute+'-'+mobileAttr+'-' + reason,
+                        reason: sNameAttribute + '-' + mobileAttr + '-' + reason,
                         active: activeAttr,
                         paymentMethod: selectedMethod,
                         transactionId: transactionId || cardLastDigits || 'Cash',

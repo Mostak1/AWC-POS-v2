@@ -25,7 +25,7 @@
             }
 
             @page {
-                margin: 0.2in;
+                margin: .4cm;
             }
         }
     </style>

@@ -51,8 +51,21 @@
                                     <div class="card-body">
                                         <i class="fa-solid fa-weight-scale"></i>
                                         Daily Sell = {{ $totalSalesD ?? 00 }}TK From {{ $salesCountD ?? 00 }} Orders
-                                        <br> <span><i class="fa-solid fa-tags"></i> Daily Discount =
-                                            {{ $totalDisD ?? 00 }}TK
+                                        <br> 
+                                        <span>
+                                            <i class="fa-solid fa-tags"></i> Daily Discount ={{ $totalDisD ?? 00 }}TK
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid fa-tags"></i> IPD Sale ={{ $ipdSale ?? 00 }}TK
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid fa-tags"></i> Food Panda Sale ={{ $foodPandaSale ?? 00 }}TK
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid fa-tags"></i> Pathao Sale ={{ $PathaoSale ?? 00 }}TK
+                                        </span>
+                                        <span>
+                                            <i class="fa-solid fa-tags"></i> Chairman Sir Discount ={{ $chairmanDis ?? 00 }}TK
                                         </span>
                                         <br><span><i class="fa-solid fa-cart-arrow-down"></i> Net Sales =
                                             {{ $totalSalesD - $totalDisD ?? 00 }}TK</span>

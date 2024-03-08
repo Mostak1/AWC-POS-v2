@@ -17,8 +17,12 @@ class CustomerController extends Controller
 {
     public function index()
     {
+        $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
+        $discount = Discount::pluck('name', 'id');
+        // $places = DB::table('places')->select('place_name', 'id')->get();
+        $places = DB::table('places')->pluck('place_name as name', 'id');
         $items = Customer::with('menu', 'user','discount')->get();
-        return view('customer.index', compact('items'));
+        return view('customer.index', compact('items','menu','discount','places'));
     }
 
     /**
