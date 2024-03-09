@@ -22,6 +22,14 @@
             padding: 0;
         }
 
+        .r-text {
+            font-size: 10pt;
+
+            font-family: "Oswald", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
         @media print {
             @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
             @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
@@ -137,29 +145,38 @@
                         </div>
                         <div class=" d-print-none staffname text-center">
                             <div class="form-group">
-                                <div>
-                                    {{-- <label for="staffs">Staff Name</label> --}}
-                                    <select name="staffs" id="staffs" class="form-control select2">
-                                        <option data-mobile="0" data-active="1" data-sname="Walk In Customer"
-                                            value="0">Walk In Customer</option>
-                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="0">Pathao
+                                <div class="input-group text-info">
+                                    {{-- <label for="staffs">Staff Name</label> 
+                                    <option data-mobile="0" data-active="1" data-name="0" value="0">Walk In
+                                            Customer</option>
+                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="26.25">Pathao
                                         </option>
-                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="0">Food
+                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="32.5">Food
                                             Panda</option>
                                         <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
+                                        <option data-mobile="0" data-active="5" data-sname="IPD" value="100">Chairman
+                                            Sir/Guest</option>
 
                                         @foreach ($customers as $customer)
                                             <option data-mobile="{{ $customer->mobile }}" class="customer"
-                                                value="{{ $customer->discount->discount }}"
-                                                data-discount="{{ $customer->discount->discount }}"
+                                                value="{{ $customer->discount }}" data-discount="{{ $customer->discount }}"
                                                 data-active="{{ $customer->card_status }}"
                                                 data-sname="{{ $customer->user->name }}">
                                                 {{ $customer->user->name }} -
                                                 {{ $customer->mobile }} -
-                                                {{ $customer->discount->discount }}
+                                                {{ $customer->discount }}
                                             </option>
                                         @endforeach
+                                    --}}
+                                    <select name="staffs" id="staffs" class="form-control select2">
+
                                     </select>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="input-group-text" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
@@ -169,7 +186,7 @@
                         </div>
 
 
-                        <div class="row r-text mb-2">
+                        <div class="row  r-text mb-2">
                             <div class="col-3">
                                 Item
                             </div>
@@ -194,23 +211,27 @@
                             <span>TK</span>
                             <div class="d-print-none">
                                 <div class="row row-cols-2 g-2">
+                                <button type="button" class="col my-2 btn btn-outline-success" id="allowDiscount">
+                                    Apply Discount
+                                </button>
+                                <div class="col">
+                                    <input type="text" id="reason" class="form-control border border-danger"
+                                        placeholder="Input Reason">
+                                </div>
+                                </div>
+                                <div class="row row-cols-2 dis-apply d-none g-2">
                                     <div class="col">
                                         {{-- <input type="text" id="number" class="form-control" placeholder="01752243665"> --}}
                                         <select class="form-control" name="oneTimeDiscount" id="oneTimeDiscount">
-                                            <option value="0">One Time Discount</option>
+                                            <option value="0">Percent </option>
                                             <option value="5">5%</option>
                                             <option value="10">10%</option>
                                             <option value="15">15%</option>
                                             <option value="20">20%</option>
                                         </select>
                                     </div>
-                                    <div class="col">
-                                        <input type="text" id="reason" class="form-control"
-                                            placeholder="Input Reason">
-                                    </div>
+                                    
                                 </div>
-                                <button type="button" class="my-2 btn btn-outline-success" id="allowDiscount">Apply
-                                    Discount</button>
                             </div>
                         </div>
 
@@ -283,7 +304,7 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -291,23 +312,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{-- <form method="POST" action="{{ url('cardcheck') }}">
-                        @csrf --}}
+                    
                     <div class="mb-3">
                         <label class="form-label">Manager Password</label>
                         <input type="password" class="form-control" id="managerPass" name="managerPass">
                     </div>
-                    {{-- <button type="submit" class="btn btn-outline-info">Submit</button> --}}
                     <button type="button" class="btn btn-outline-info" id="managerAuth"
                         data-bs-dismiss="modal">Submit</button>
-                    {{-- </form> --}}
+                  
                 </div>
-                {{-- <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div> --}}
+               
             </div>
         </div>
-    </div>
+    </div> --}}
+    @include('customer.modal')
 @endsection
 
 @section('script')
@@ -324,8 +342,87 @@
             }
         });
         $(document).ready(function() {
-            // 
+            // customer data add
+            $('#customerSubmitBtn').click(function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                var formData = $('#customerForm').serialize(); // Serialize form data
+                console.log(formData);
+                $.ajax({
+                    url: "{{ route('customer.store') }}", // URL to submit the form data
+                    type: "POST",
+                    data: formData, // Form data
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                            'content') // Include CSRF token
+                    },
+                    success: function(response) {
+                        customerCreate();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Customer information added successfully.',
+                        }, )
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Customer information added Fail.',
+                        }, )
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
             // product show by category
+
+            function customerCreate() {
+                $.ajax({
+                    url: '{{ route('get-customers') }}',
+                    type: 'GET',
+                    success: function(response) {
+                        // Clear existing options
+                        $('#staffs').empty();
+
+                        // Add default option
+                        $('#staffs').append(
+                            `
+                            <option data-mobile="0" data-active="1" data-name="0" value="0">Walk In
+                                            Customer</option>
+                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="26.25">Pathao
+                                        </option>
+                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="32.5">Food
+                                            Panda</option>
+                                        <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
+                                        <option data-mobile="0" data-active="5" data-sname="IPD" value="100">Chairman
+                                            Sir/Guest</option>
+                            `
+                        );
+
+                        // Add options for each customer
+                        $.each(response, function(index, customer) {
+                            var discount = parseFloat(customer.discount);
+                            console.log("Discount value:", discount);
+
+                            $('#staffs').append(`<option data-mobile="${customer.mobile}" data-id="${customer.id}" class="customer" value="${customer.discount}" data-discount="${customer.discount}" data-active="${customer.card_status}" data-sname="${customer.user.name}">
+                ${customer.user.name} - ${customer.mobile} - ${customer.discount}-${customer.id}
+            </option>`);
+                        });
+
+                        // Initialize select2 after populating options
+                        $('#staffs').select2();
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                    }
+                });
+
+            };
+            customerCreate();
+            $('customerSubmitBtn').click(function() {
+                customerCreate();
+
+            });
             $("#paymentMethod").change(function() {
                 var selectedMethod = $(this).val();
                 $("#paymentMethod1").text("");
@@ -760,7 +857,26 @@
             }
 
             $('#allowDiscount').click(function() {
-
+                let selectedOption = $('#staffs').find(':selected');
+                let sNameAttribute = selectedOption.data('name');
+                if (sNameAttribute == 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Add Customer For Discount',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
+                    return false;
+                } else {
+                    $('.dis-apply').toggleClass('d-none');
+                    //    payAmount();
+                }
+            });
+            $('#oneTimeDiscount').on('change', function() {
                 payAmount();
             });
 
@@ -800,10 +916,12 @@
                 payAmount();
             });
             $('#submitp').click(function() {
+                let selectedOption = $('#staffs').find(':selected');
+                let activeAttr = selectedOption.data('active');
                 var totalbill = $('#total-order').text();
                 var paybill = $('#total-order2').text();
                 var reason = $('#reason').val();
-                if (totalbill > paybill && reason == "") {
+                if (totalbill > paybill && (activeAttr === 1 || activeAttr === 5) && reason == "") {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Input Reason First',
@@ -823,12 +941,13 @@
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
                 var sInvoice = $('#invoiceStaff').text();
-                let selectedOption = $('#staffs').find(':selected');
+               
 
                 // Get the values of the 'data-sname' attribute and the text content
                 let sNameAttribute = selectedOption.data('sname');
+                let idAttr = selectedOption.data('id');
                 let mobileAttr = selectedOption.data('mobile');
-                let activeAttr = selectedOption.data('active');
+               
                 let sNameText = selectedOption.text();
                 if (sInvoice === "Staff-Invoice" && staff === 0) {
 
@@ -920,6 +1039,7 @@
                         discount: totalbill - paybill,
                         reason: sNameAttribute + '-' + mobileAttr + '-' + reason,
                         active: activeAttr,
+                        cid: idAttr,
                         paymentMethod: selectedMethod,
                         transactionId: transactionId || cardLastDigits || 'Cash',
                     },

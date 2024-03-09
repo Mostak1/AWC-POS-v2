@@ -10,7 +10,7 @@ class Customer extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'user_id','discount_id', 'mobile', 'address', 'card_number', 'valid_date', 'active_date', 'total_meal', 'consumed_meal', 'menu_id', 'card_status',
+        'user_id','discount_id','discount', 'mobile', 'address', 'card_number', 'valid_date', 'active_date', 'total_meal', 'consumed_meal', 'menu_id', 'card_status',
     ];
     public function menu()
     {

@@ -1,26 +1,18 @@
-{{-- @extends('layouts.main')
-@section('content') --}}
-<div class="card card-hover shadow mb-4 modal fade" id="ModalCreate" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="card-header py-3 d-flex justify-content-between">
-                    <h4 class="m-0 font-weight-bold text-info"> Add customer Informations</h4>
-                    <a href="{{ url('customer') }}" class="btn btn-info  btn-sm" title="Back to Card Informations">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-
-                </div>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Insert A New Customer</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="card-body mt-1">
-                {{ Form::open(['route' => 'customer.store', 'class' => 'user', 'enctype' => 'multipart/form-data']) }}
-
-                {{-- @include('partial.flash')
-            @include('partial.error') --}}
-
+            <div class="modal-body">
+                {{ Form::open(['route' => 'customer.store', 'class' => 'user', 'enctype' => 'multipart/form-data', 'id' => 'customerForm']) }}
                 <div class="form-group row g-4">
                     <div class="col-sm-4 mb-3 mb-sm-0">
-                        <label for="name" class="form-label">Name :</label>
+                        <label for="name" class="form-label position-relative">Name<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-danger">*
+                          </span> :</label>
                         {!! Form::text('name', null, [
                             'required',
                             'class' => 'form-control form-control-profile',
@@ -37,7 +29,11 @@
                         ]) !!}
                     </div>
                     <div class="col-sm-4 mb-3 mb-sm-0">
-                        <label for="mobile" class="form-label">Mobile :</label>
+                        <label for="mobile" class="form-label position-relative">Mobile
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-danger">
+                                *
+                              </span>
+                            :</label>
                         {!! Form::text('mobile', null, [
                             'required',
                             'class' => 'form-control form-control-profile',
@@ -47,27 +43,25 @@
                     </div>
 
                     <div class="col-sm-4 mb-3 mb-sm-0">
-                        <label for="card_status" class="control-label">Sector:</label>
+                        <label for="discount" class="control-label">Customer Group:</label>
                         {!! Form::select(
-                            'card_status',
+                            'discount',
                             [
-                                1 => 'Customer',
-                                2 => 'Staff',
-                                3 => 'Pathao',
-                                4 => 'Food Panda',
-                                5 => 'Chairman Sir',
-                                6 => 'IPD',
+                                0 => 'Customer',
+                                30 => 'Staff',
+                                10=> 'Special Customer',
+                                
                             ],
                             null,
                             [
                                 'class' => 'form-control',
-                                'id' => 'card_status',
+                                'id' => 'discount',
                             ],
                         ) !!}
                     </div>
                     <div class="col-sm-4 mb-3 mb-sm-0">
                         <label for="place" class="control-label">Select Place:</label>
-                        {!! Form::select('place', $places, null, [
+                        {!! Form::select('place', ['' => 'Select Place'] + $places->toArray(), null, [
                             'class' => 'form-control',
                             'id' => 'place',
                         ]) !!}
@@ -80,45 +74,17 @@
                             'placeholder' => 'Address',
                         ]) !!}
                     </div>
-                    <div class="col-sm-4 mb-3 mb-sm-0">
-                        <label for="discount_id" class="control-label">Discount Policy:</label>
-                        {!! Form::select('discount_id', $discount, null, ['required', 'class' => 'form-control', 'id' => 'discount_id']) !!}
-                    </div>
-                    {{-- <div class="col-sm-4 mb-3 mb-sm-0">
-                    <label for="menu_id" class="control-label">Menu :</label>
-                    {!! Form::select('menu_id', $menu, null, [
-                       
-                        'class' => 'form-control',
-                        'id' => 'menu_id',
-                        'placeholder' => 'Menu',
-                    ]) !!}
-                </div> --}}
-                    {{-- <div class="col-sm-4 mb-3 mb-sm-0">
-                    <label for="card_status" class="control-label">Card Status :</label>
-                    {!! Form::select('card_status', ['ACTIVE' => 'ACTIVE', 'SUSPEND' => 'SUSPEND', 'BLOCKED' => 'BLOCKED'], null, [
-                        'required',
-                        'class' => 'form-control',
-                        'id' => 'card_status',
-                    ]) !!}
-                </div> --}}
-                    {{-- <div class="col-sm-4 mb-3 mb-sm-0">
-                    <label for="total_meal" class="control-label">Total Meal :</label>
-                    {!! Form::number('total_meal', 0, [
-                        'required',
-                        'class' => 'form-control form-control-profile',
-                        'id' => 'total_meal',
-                        'placeholder' => 'Total Meal According to Menu 12/15/20',
-                    ]) !!}
-                </div> --}}
+                   
                 </div>
 
                 <div class="form-group mt-3">
-                    <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Back</button>
-                    {!! Form::submit('Add Customer Information', ['class' => 'my-3 btn btn-info']) !!}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {!! Form::submit('Add Customer Information', ['class' => 'my-3 btn btn-info', 'id' => 'customerSubmitBtn']) !!}
+
                 </div>
                 {!! Form::close() !!}
             </div>
+            
         </div>
     </div>
 </div>
-{{-- @endsection --}}

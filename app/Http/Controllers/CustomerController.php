@@ -15,14 +15,19 @@ use Faker\Factory as Faker;
 
 class CustomerController extends Controller
 {
+    public function getCustomers()
+    {
+        $customers = Customer::with('menu', 'user')->get();
+        return response()->json($customers);
+    }
     public function index()
     {
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
         $discount = Discount::pluck('name', 'id');
         // $places = DB::table('places')->select('place_name', 'id')->get();
         $places = DB::table('places')->pluck('place_name as name', 'id');
-        $items = Customer::with('menu', 'user','discount')->get();
-        return view('customer.index', compact('items','menu','discount','places'));
+        $items = Customer::with('menu', 'user', 'discount')->get();
+        return view('customer.index', compact('items', 'menu', 'discount', 'places'));
     }
 
     /**
@@ -34,8 +39,8 @@ class CustomerController extends Controller
         $discount = Discount::pluck('name', 'id');
         // $places = DB::table('places')->select('place_name', 'id')->get();
         $places = DB::table('places')->pluck('place_name as name', 'id');
-        
-        return view('customer.create', compact('menu','discount','places'));
+
+        return view('customer.create', compact('menu', 'discount', 'places'));
     }
     public function uniqueEmail()
     {
@@ -44,7 +49,7 @@ class CustomerController extends Controller
             // Generate a random email address
             // $randomEmail = Str::random(10) . '@gmail.com';
             $randomEmail = $faker->firstName . '@gmail.com';
-            
+
             // Check if the email already exists in the database
             $existingUser = User::where('email', $randomEmail)->first();
         } while ($existingUser);
@@ -54,16 +59,21 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'card_status' => ['required'],
-            'name' => ['required','string','min:3' ,'max:255'],
-            'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
-            'email' => [ 'max:255', 'unique:'.User::class],
+            'discount' => ['required'],
+            'name' => ['required', 'string', 'min:3', 'max:255'],
+            'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/', 'unique:' . Customer::class],
+            'email' => ['max:255', 'unique:' . User::class],
         ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email ?? $this->uniqueEmail(),
             'password' => Hash::make(12345678),
         ]);
+        if ($request->discount == 0 || $request->discount == 10) {
+            $card_status = 1;
+        } else if ($request->discount == 30) {
+            $card_status = 2;
+        }
 
         if ($user) {
             $currentDate = Carbon::now();
@@ -71,19 +81,20 @@ class CustomerController extends Controller
             $data = [
                 'user_id' => $user->id,
                 'discount_id' => $request->discount_id,
+                'discount' => $request->discount,
                 'mobile' => $request->mobile,
-                'address' =>$request->place .','.$request->address ?? 'No Address',
+                'address' => $request->place . ',' . $request->address ?? 'No Address',
                 'card_number' => 'green' . Str::random(7),
                 'valid_date' => $thirtyDaysAgo,
                 'active_date' => $currentDate,
-                'card_status' => $request->card_status,
+                'card_status' => $card_status,
                 'total_meal' => $request->total_meal,
                 'consumed_meal' => 0,
                 'menu_id' => $request->menu_id
             ];
             $create = Customer::create($data);
             if ($create) {
-                return back()->with('success', 'card ' . $create->id . ' has been created Successfully!');
+                return back()->with('success', 'Customer ' . $create->id . ' has been created Successfully!');
             }
         }
     }
@@ -95,7 +106,7 @@ class CustomerController extends Controller
     {
         return view('customer.show', compact('customer'));
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -103,7 +114,7 @@ class CustomerController extends Controller
     {
         $discount = Discount::pluck('name', 'id');
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
-        return view('customer.edit', compact('customer','menu','discount'));
+        return view('customer.edit', compact('customer', 'menu', 'discount'));
         //
     }
 
@@ -117,26 +128,26 @@ class CustomerController extends Controller
             // 'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
         ]);
         $currentDate = Carbon::now();
-            $thirtyDaysAgo = Carbon::now()->addDays(31);
-            if ($request->mobile) {
-                $customer->mobile=$request->mobile;
-            }
-            if ($request->address) {
-                $customer->address=$request->address;
-            }
-            if ($request->card_status) {
-                $customer->card_status=$request->card_status;
-            }
-            if ($request->total_meal) {
-                $customer->total_meal=$request->total_meal;
-            }
-            if ($request->menu_id) {
-                $customer->menu_id=$request->menu_id;
-            }
-            if ($request->discount_id) {
-                $customer->discount_id=$request->discount_id;
-            }
-           
+        $thirtyDaysAgo = Carbon::now()->addDays(31);
+        if ($request->mobile) {
+            $customer->mobile = $request->mobile;
+        }
+        if ($request->address) {
+            $customer->address = $request->address;
+        }
+        if ($request->card_status) {
+            $customer->card_status = $request->card_status;
+        }
+        if ($request->total_meal) {
+            $customer->total_meal = $request->total_meal;
+        }
+        if ($request->menu_id) {
+            $customer->menu_id = $request->menu_id;
+        }
+        if ($request->discount_id) {
+            $customer->discount_id = $request->discount_id;
+        }
+
         if ($customer->save()) {
             return redirect()->route('customer.index')->with('success', "Update Successfully!");
         } else {
@@ -161,18 +172,15 @@ class CustomerController extends Controller
         $customer = Customer::with('user')->where('card_number', $request->card_number)->first();
 
         if ($customer) {
-            $havemeal =$customer->total_meal-$customer->consumed_meal;
-            if ($havemeal>0 && $currentDate <= $customer->valid_date) {
+            $havemeal = $customer->total_meal - $customer->consumed_meal;
+            if ($havemeal > 0 && $currentDate <= $customer->valid_date) {
                 $customer->consumed_meal = $customer->consumed_meal + 1;
                 $customer->save();
-    
-                return redirect()->back()->with('success',$customer->user->name . ' Successfully Consumed Todays Meal!');
+
+                return redirect()->back()->with('success', $customer->user->name . ' Successfully Consumed Todays Meal!');
             } else {
-                return redirect()->back()->with('info',$customer->user->name . ' You Consumed All Meal or You Date Expired');
-               
+                return redirect()->back()->with('info', $customer->user->name . ' You Consumed All Meal or You Date Expired');
             }
-            
-           
         } else {
             return redirect()->back()->with('error', 'Customer not found.');
         }
@@ -182,11 +190,12 @@ class CustomerController extends Controller
     {
         return view('customer.info');
     }
-    public function getcardinfo(Request $request){
+    public function getcardinfo(Request $request)
+    {
         $customer = Customer::with('user')->where('card_number', $request->customer_card_number)->first();
 
         if ($customer) {
-            return redirect()->back()->with('customer',$customer);
+            return redirect()->back()->with('customer', $customer);
         } else {
             return redirect()->back()->with('error', 'Customer not found.');
         }

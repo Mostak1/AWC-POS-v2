@@ -43,6 +43,9 @@ Route::get('/linkstorage', function () {
     symlink($targetFolder, $linkFolder);
 
  });
+ Route::get('/get-customers', [CustomerController::class,'getCustomers'])->name('get-customers');
+
+
 Route::get('moneyReceipt/{id}',[HomeController::class,'moneyReceipt'])->name('moneyReceipt');
 Route::post('reportPage',[HomeController::class,'reportPage'])->name('reportPage');
 Route::get('printrecipt/{id}', [HomeController::class,'printrecipt']);

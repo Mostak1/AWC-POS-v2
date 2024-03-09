@@ -5,7 +5,8 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h4 class="m-0 font-weight-bold text-info">List of Food Category</h4>
             <div class="">
-                <a class="btn btn-sm btn-info" data-toggle="modal" data-target="#ModalCreate" href="#">
+                <a class="btn btn-sm btn-info" data-toggle="modal" data-target="#ModalCreate"
+                    href="{{ url('customer/create') }}">
                     <i class="fa-solid fa-plus"></i>
                     Add
                 </a>
@@ -17,7 +18,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th colspan="12" class="tablebtn text-end">
+                            <th colspan="7" class="tablebtn text-end">
                             </th>
                         </tr>
                         <tr>
@@ -25,8 +26,10 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Mobile</th>
-                            <th>Discount Policy</th>
-                            <th>Status</th>
+                            <th>Discount</th>
+                            <th>Total Order</th>
+                            <th>Total Bill</th>
+
                             {{-- <th>Card Number</th>
                             <th>Card Validity</th>
                             <th>Card Activation</th>
@@ -44,10 +47,6 @@
                                 <td>{{ $item->user->name }}</td>
                                 <td>{{ $item->user->email }}</td>
                                 <td>{{ $item->mobile }}</td>
-                                <td>{{ $item->discount->name }}</td>
-                                {{-- <td>{{ $item->card_number }}</td>
-                                <td>{{ $item->valid_date }}</td>
-                                <td>{{ $item->active_date }}</td> --}}
                                 <td>
                                     @if ($item->card_status == 1)
                                         Customer
@@ -60,7 +59,28 @@
                                     @elseif($item->card_status == 5)
                                         Chairman Sir
                                     @endif
+                                   ({{ $item->discount }})
+
+
                                 </td>
+                                <td>{{ $item->total_meal }}</td>
+                                <td>{{ $item->consumed_meal }}</td>
+                                {{-- <td>{{ $item->card_number }}</td>
+                                <td>{{ $item->valid_date }}</td>
+                                <td>{{ $item->active_date }}</td> --}}
+                                {{-- <td>
+                                    @if ($item->card_status == 1)
+                                        Customer
+                                    @elseif($item->card_status == 2)
+                                        Staff
+                                    @elseif($item->card_status == 3)
+                                        Pathao
+                                    @elseif($item->card_status == 4)
+                                        Food Panda
+                                    @elseif($item->card_status == 5)
+                                        Chairman Sir
+                                    @endif
+                                </td> --}}
                                 {{-- <td>{{ $item->menu->name }}</td> --}}
                                 {{-- <td>{{ $item->total_meal }}</td>
                                 <td>{{ $item->consumed_meal }}</td> --}}

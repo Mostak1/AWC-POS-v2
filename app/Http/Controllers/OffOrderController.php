@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OffOrder;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\CustomerToken;
 use App\Models\Menu;
 use App\Models\OffOrderDetails;
@@ -107,7 +108,14 @@ class OffOrderController extends Controller
                     $menu->save();
                 }
             }
-
+            if ($request->cid) {
+                $customer = Customer::find($request->cid);
+                if ($customer) {
+                    $customer->total_meal = $customer->total_meal + 1;
+                    $customer->consumed_meal = $customer->consumed_meal + $request->totalbill;
+                    $customer->save();
+                }
+            }
             DB::commit();
 
             return back()->with('success', 'Order Details Added');

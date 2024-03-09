@@ -44,8 +44,8 @@
                         ]) !!}
                     </div>
 
-                    <div class="col-sm-4 mb-3 mb-sm-0">
-                        <label for="card_status" class="control-label">Sector:</label>
+                    {{-- <div class="col-sm-4 mb-3 mb-sm-0">
+                        <label for="card_status" class="control-label">Customer Group:</label>
                         {!! Form::select(
                             'card_status',
                             [
@@ -60,6 +60,23 @@
                             [
                                 'class' => 'form-control',
                                 'id' => 'card_status',
+                            ],
+                        ) !!}
+                    </div> --}}
+                    <div class="col-sm-4 mb-3 mb-sm-0">
+                        <label for="discount" class="control-label">Customer Group:</label>
+                        {!! Form::select(
+                            'discount',
+                            [
+                                0 => 'Customer',
+                                30 => 'Staff',
+                                10=> 'Special Customer',
+                                
+                            ],
+                            null,
+                            [
+                                'class' => 'form-control',
+                                'id' => 'discount',
                             ],
                         ) !!}
                     </div>
@@ -78,10 +95,10 @@
                             'placeholder' => 'Address',
                         ]) !!}
                     </div>
-                    <div class="col-sm-4 mb-3 mb-sm-0">
+                    {{-- <div class="col-sm-4 mb-3 mb-sm-0">
                         <label for="discount_id" class="control-label">Discount Policy:</label>
                         {!! Form::select('discount_id', $discount, null, ['required', 'class' => 'form-control', 'id' => 'discount_id']) !!}
-                    </div>
+                    </div> --}}
                     {{-- <div class="col-sm-4 mb-3 mb-sm-0">
                     <label for="menu_id" class="control-label">Menu :</label>
                     {!! Form::select('menu_id', $menu, null, [

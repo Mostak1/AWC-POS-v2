@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->bigInteger('discount_id')->unsigned();
+            $table->bigInteger('discount_id')->unsigned()->nullable();
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
+            $table->integer('discount')->default(0)->length(2);
             $table->string('mobile')->unique();
             $table->string('address')->nullable();
             $table->string('card_number')->unique()->nullable();

@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Discount;
 use App\Models\Menulog;
 use App\Models\OffOrder;
 use App\Models\Staff;
@@ -13,6 +14,7 @@ use App\Models\Subcategory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -33,14 +35,17 @@ class MenuController extends Controller
     }
 
     public function order()
-    {
+    { $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
+        $discount = Discount::pluck('name', 'id');
+        // $places = DB::table('places')->select('place_name', 'id')->get();
+        $places = DB::table('places')->pluck('place_name as name', 'id');
         $lastOrderId = OffOrder::orderBy('id', 'DESC')->value('id');
         $cats = Category::get();
         $staffs= Staff::get();
         $customers = Customer::with('menu', 'user','discount')->get();
 
         $menus = Menu::with(['category', 'subcategory'])->paginate(12);
-        return view('offorder.order', compact('menus','customers', 'lastOrderId', 'cats','staffs'))->with('user', Auth::user());
+        return view('offorder.order', compact('places','discount','menu','menus','customers', 'lastOrderId', 'cats','staffs'))->with('user', Auth::user());
     }
     public function menu()
     {
