@@ -102,7 +102,7 @@ class HomeController extends Controller
         $foodPandaSale = OffOrder::whereDate('created_at', $currentDate)->where('active', 4)->sum('total');
         $pathaoSale = OffOrder::whereDate('created_at', $currentDate)->where('active', 3)->sum('total');
         $chairmanDis = OffOrder::whereDate('created_at', $currentDate)->where('active', 5)->sum('discount');
-       
+
 
         return view('dashboard', compact(
             'chairmanDis',
@@ -363,10 +363,10 @@ class HomeController extends Controller
             'selectedDate'
         ));
         // You can return the aggregated data to a view or as an API response
-        return response()->json([
-            'customerData' => $customerData,
-            'staffData' => $staffData,
-        ]);
+        // return response()->json([
+        //     'customerData' => $customerData,
+        //     'staffData' => $staffData,
+        // ]);
     }
     public function moneyReceipt($id)
     {
@@ -439,5 +439,51 @@ class HomeController extends Controller
             }
         }
         return view('receipt', compact('staffData', 'invoice', 'payMethod', 'total', 'discount', 'active'));
+    }
+
+    public function chartReport(Request $request)
+    {
+        // Fetch orders data
+        $currentDate = Carbon::now();
+        $selectedDate = $request->date ??  $currentDate;
+        $data = OffOrderDetails::with('menu.category', 'off_order.payment')->whereDate('created_at', $selectedDate)->get();
+        $customerData = [];
+        // Single Data 
+        $customerSale = OffOrder::whereDate('created_at', $selectedDate)->where('active', 1)->sum('total');
+        $customerDis = OffOrder::whereDate('created_at', $selectedDate)->where('active', 1)->sum('discount');
+
+        foreach ($data as $order) {
+            $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
+
+            // Check if the order date matches the selected date and the order is not active
+            if ($order->off_order->active == 1) {
+
+
+                $menuId = $order->menu_id;
+
+                // Calculate discounts
+                $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
+                $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
+
+                // If menu id is not in customerData, add it; otherwise, update quantity and total
+                if (!isset($customerData[$menuId])) {
+                    $customerData[$menuId] = [
+                        'menuName' => $order->menu->name,
+                        'category' => $order->menu->category->name,
+                        'date' => $order->created_at,
+                        'quantity' => $order->quantity,
+                        'price' => $cDiscount,
+                        'total' => $order->total,
+                    ];
+                } else {
+                    $customerData[$menuId]['quantity'] += $order->quantity;
+                    $customerData[$menuId]['total'] += $order->total;
+                }
+            }
+        }
+        // return response()->json([
+        //     'customerData' => $customerData,
+        //     'staffData' => $staffData,
+        // ]);
     }
 }

@@ -144,7 +144,7 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th colspan="8" class="tablebtn text-end">
+                                            <th colspan="9" class="tablebtn text-end">
                                                 <span class="me-2">
                                                     Cash {{ $cash }},
                                                     bKash {{ $bkash }},
@@ -161,6 +161,7 @@
                                         </tr>
                                         <tr>
                                             <th>Order ({{ $orderCountD }})</th>
+                                            <th>Ordered By</th>
                                             <th>Food Name</th>
                                             <th>Payment Method ({{ $bkash }})</th>
                                             <th>Total Amount ({{ $totalSalesD }} TK)</th>
@@ -176,6 +177,7 @@
                                         @foreach ($items as $offorder)
                                             <tr>
                                                 <td>{{ $loop->index + 1 }}</td>
+                                                <td>{{$offorder->user->name }}</td>
                                                 <td>
                                                     @foreach ($offorder->offorderdetails as $detail)
                                                         <div class="">
@@ -224,9 +226,6 @@
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h4 class="m-0 font-weight-bold text-info">Order Report Table</h4>
-                            <div class="m-0 font-weight-bold btn btn-outline-info" id="submitp"><i
-                                    class="fa-solid fa-print"></i></div>
-
                         </div>
                         <div class="card-body mt-4">
                             @if ($user->can('category.index') || $user->can('subcategory.index') || $user->can('tab.index'))
@@ -642,11 +641,9 @@
 @section('script')
     <!-- DataTables JavaScript -->
     {{-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.9/js/buttons.print.min.js"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{asset('assets/js/chart.js')}}"></script>
     <script>
         $(document).ready(function() {
-
-
             function orderPrint(items) {
                 let q = "";
                 items.forEach(order => {
@@ -954,206 +951,6 @@
 
 
             }
-            // Function to process and display the Staff  data for current date
-            function staffdata(data) {
-                function getCurrentDate() {
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                    var yyyy = today.getFullYear();
-
-                    return yyyy + '-' + mm + '-' + dd;
-                }
-                console.log(getCurrentDate());
-
-                var selectedDate = getCurrentDate();
-                var filteredData3 = data.filter(function(order) {
-                    var orderDate = order.created_at.split('T')[0];
-
-                    // Assuming date format from the API is in 'YYYY-MM-DD'
-                    if (selectedDate && orderDate !== selectedDate) {
-                        return false;
-                    }
-                    if (order.off_order.active == 1) {
-                        return false;
-                    }
-                    return true;
-
-                });
-                // Create an object to store aggregated data based on menu id
-                var aggregatedData3 = {};
-
-                // Iterate through each order in the filtered data
-                filteredData3.forEach(function(order) {
-                    var menuId = order.menu_id;
-                    var reason = order.off_order.reason;
-                    console.log(menuId, reason);
-                    // If menu id is not in aggregatedData, add it; otherwise, update quantity and total
-
-                    if (!aggregatedData3[menuId]) {
-                        var cDiscount = order.menu.price - Math.round(((order.menu.category.discount * order
-                                .menu.price) / 100) /
-                            5) * 5;
-                        var sDiscount = cDiscount - Math.round(((order.menu.discount * cDiscount) / 100) /
-                            5) * 5;
-
-
-                        aggregatedData3[menuId] = {
-                            menuName: order.menu.name,
-                            category: order.menu.category.name,
-                            date: order.created_at,
-                            quantity3: order.quantity,
-                            price: sDiscount,
-                            total3: order.total,
-                        };
-
-
-                    } else {
-                        aggregatedData3[menuId].quantity3 += order.quantity;
-                        aggregatedData3[menuId].total3 += order.total;
-                    }
-
-                });
-
-                // ...
-                console.log(aggregatedData3);
-                console.log(data);
-
-                var filterdataArray3 = $.map(aggregatedData3, function(value) {
-                    return value;
-                });
-
-                console.log('filterdataArray');
-                console.log(filterdataArray3);
-                var tableBody = $('#stafforderdetails tbody');
-                $.each(filterdataArray3, function(index, data) {
-                    var row = $('<tr>');
-                    row.append($('<td>').text(data.menuName));
-                    row.append($('<td>').text(data.category));
-                    row.append($('<td>').text(data.quantity3));
-                    row.append($('<td>').text(data.price));
-                    row.append($('<td>').text(data.total3));
-
-                    // Add more cells if there are additional properties in your data
-
-                    tableBody.append(row);
-                });
-
-                var subTotalQuantity = 0;
-                var subTotalTotal = 0;
-
-                for (var menuId in aggregatedData3) {
-                    subTotalQuantity += aggregatedData3[menuId].quantity3;
-                    subTotalTotal += aggregatedData3[menuId].total3;
-                }
-
-                // Append a new row at the bottom with the sub-total
-                var subTotalRow =
-                    '<div class="sub-total"><span >Total Quantity: </span><span class="me-2">' +
-                    subTotalQuantity + 'Pices </span><span>Total Sale: </span><span>' + subTotalTotal +
-                    'TK </span></div>';
-                $('#stafftotal').append(subTotalRow);
-            }
-            // Function to process and display the Customer data for current date
-            function customerdata(data) {
-                function getCurrentDate() {
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                    var yyyy = today.getFullYear();
-
-                    return yyyy + '-' + mm + '-' + dd;
-                }
-                console.log(getCurrentDate());
-
-                var selectedDate = getCurrentDate();
-                var filteredData = data.filter(function(order) {
-                    var orderDate = order.created_at.split('T')[0];
-
-                    // Assuming date format from the API is in 'YYYY-MM-DD'
-                    if (selectedDate && orderDate !== selectedDate) {
-                        return false;
-                    }
-                    if (order.off_order.active == 2) {
-                        return false;
-                    }
-                    return true;
-
-                });
-                // Create an object to store aggregated data based on menu id
-                var aggregatedData = {};
-
-                // Iterate through each order in the filtered data
-                filteredData.forEach(function(order) {
-                    var menuId = order.menu_id;
-                    var reason = order.off_order.reason;
-                    console.log(menuId, reason);
-                    // If menu id is not in aggregatedData, add it; otherwise, update quantity and total
-
-                    if (!aggregatedData[menuId]) {
-                        var cDiscount = order.menu.price - Math.round(((order.menu.category.discount * order
-                                .menu.price) / 100) /
-                            5) * 5;
-                        var sDiscount = cDiscount - Math.round(((order.menu.discount * cDiscount) / 100) /
-                            5) * 5;
-
-
-                        aggregatedData[menuId] = {
-                            menuName: order.menu.name,
-                            category: order.menu.category.name,
-                            date: order.created_at,
-                            quantity: order.quantity,
-                            price: cDiscount,
-                            total: order.total,
-                        };
-
-
-                    } else {
-                        aggregatedData[menuId].quantity += order.quantity;
-                        aggregatedData[menuId].total += order.total;
-                    }
-
-                });
-
-                // ...
-                console.log(aggregatedData);
-                console.log(data);
-
-                var filterdataArray = $.map(aggregatedData, function(value) {
-                    return value;
-                });
-
-                console.log('filterdataArray');
-                console.log(filterdataArray);
-                var tableBody = $('#customerdata tbody');
-                $.each(filterdataArray, function(index, data) {
-                    var row = $('<tr>');
-                    row.append($('<td>').text(data.menuName));
-                    row.append($('<td>').text(data.category));
-                    row.append($('<td>').text(data.quantity));
-                    row.append($('<td>').text(data.price));
-                    row.append($('<td>').text(data.total));
-
-                    // Add more cells if there are additional properties in your data
-
-                    tableBody.append(row);
-                });
-
-                var subTotalQuantity = 0;
-                var subTotalTotal = 0;
-
-                for (var menuId in aggregatedData) {
-                    subTotalQuantity += aggregatedData[menuId].quantity;
-                    subTotalTotal += aggregatedData[menuId].total;
-                }
-
-                // Append a new row at the bottom with the sub-total
-                var subTotalRow =
-                    '<div class="sub-total"><span >Total Quantity: </span><span class="me-2">' +
-                    subTotalQuantity + 'Pices </span><span>Total Sale: </span><span>' + subTotalTotal +
-                    'TK </span></div>';
-                $('#customertotal').append(subTotalRow);
-            }
         });
 
         $(document).ready(function() {
@@ -1165,15 +962,12 @@
             var filterEndTimeInput1 = $('#filterEndTime1');
             var staff1 = $('#filterStaff1');
             var myChart; // Declare myChart outside the fetchData function
-
             // Initial load
             fetchData1();
 
             // Apply filters button click event
             $('#applyFilters1').on('click', function() {
                 fetchData1(); // Reload data when the Apply Filters button is clicked
-
-
             });
             // clear filter
             $('#clearFilters1').click(function() {
@@ -1219,26 +1013,12 @@
                 });
 
             }
-
-
             // Function to process and display the data
             function processData1(data) {
                 var selectedDate1 = filterDateInput1.val();
-
-
                 // Populate the category filter dropdown dynamically
                 var uniqueCategories1 = [...new Set(data.map(order => order.menu.category.name))];
                 var categorySelect1 = $('#filterCategory1');
-
-
-
-
-
-                // // Add options based on unique categories
-                // uniqueCategories1.forEach(category => {
-                //     categorySelect1.append('<option value="' + category + '">' + category + '</option>');
-                // });
-
                 // Filter data based on the selected date and additional criteria
                 var filteredData1 = data.filter(function(order) {
                     var orderDate1 = order.created_at.split('T')[0];

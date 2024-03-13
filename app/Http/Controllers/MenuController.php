@@ -178,9 +178,9 @@ class MenuController extends Controller
         if ($request->hasFile('image')) {
             if ($menu->image) {
                 $exfile = $menu->image;
-                if (Storage::disk('public')->exists('menu/' . $exfile)) {
-                    Storage::disk('public')->delete('menu/' . $exfile);
-                }
+                
+                    Storage::delete('public/menu/' . $exfile);
+              
             }
             $file = $request->file('image');
             $extention = $file->extension();
@@ -263,7 +263,7 @@ class MenuController extends Controller
                 }
             }
 
-            return back()->with('success', "Update Successfully!");
+            return redirect()->route('menus.index')->with('success', "Update Successfully!");
         } else {
             return back()->with('error', "Update Failed!");
         }
