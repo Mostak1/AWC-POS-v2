@@ -46,19 +46,22 @@ class HomeController extends Controller
 
             ->sum('discount');
 
-
+            $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
+        
+            // Get the end of the last month
+            $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
 
         // Count orders for the last 7 days
-        $orderCountW = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])->count();
+        $orderCountW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
 
         // Count orders for the last 30 days
         $orderCountM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])->count();
 
         // Calculate total sales for the last 7 days
-        $totalSalesW = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])
+        $totalSalesW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->sum('total');
-        $totalDisW = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])
+        $totalDisW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->sum('discount');
 
@@ -73,7 +76,7 @@ class HomeController extends Controller
         $salesCountD = OffOrder::whereDate('created_at', $currentDate)
 
             ->count();
-        $salesCountW = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])
+        $salesCountW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->count();
         $salesCountM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])
@@ -92,7 +95,7 @@ class HomeController extends Controller
         $bkash = Payment::whereDate('created_at', $currentDate)->where('method', 'bkash')->sum('total');
         $cash = Payment::whereDate('created_at', $currentDate)->where('method', 'cash')->sum('total');
         $card = Payment::whereDate('created_at', $currentDate)->where('method', 'card')->sum('total');
-        $items = OffOrder::with('tab', 'user', 'offorderdetails', 'payment')->whereBetween('created_at', [$sevenDaysAgo, $currentDate])->orderByDesc('id')->get();
+        $items = OffOrder::with('tab', 'user', 'offorderdetails', 'payment')->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->orderByDesc('id')->get();
         // $items = OffOrder::with('tab', 'user', 'offorderdetails', 'payment')->whereDate('created_at', $currentDate)->get();
         $orderDetails = OffOrderDetails::with('menu', 'off_order')->whereDate('created_at', $currentDate)->get();
 

@@ -34,13 +34,48 @@ class OffOrderController extends Controller
         $currentDate = Carbon::now();
         // dd($currentDate);
         $orderCountD = OffOrder::whereDate('created_at', $currentDate)->count();
-
         $totalSalesD = OffOrder::whereDate('created_at', $currentDate)->sum('total');
         $totalDisD = OffOrder::whereDate('created_at', $currentDate)->sum('discount');
         $items = OffOrder::with('tab', 'user', 'offorderdetails')->whereDate('created_at', $currentDate)->get();
         // $items = OffOrderDetails::with(['offorder.user', 'menu'])->whereDate('created_at', $currentDate)->get();
 
         return view('offorder.dailyreport', compact('items', 'orderCountD', 'totalSalesD', 'totalDisD'));
+    }
+    public function weeklyReport()
+    {
+        $currentDate = Carbon::now();
+        // Get date 7 days ago
+        $sevenDaysAgo = Carbon::now()->subDays(7);
+
+        // Get date 30 days ago
+        $thirtyDaysAgo = Carbon::now()->subDays(30);
+        $currentDate = Carbon::now();
+        // dd($currentDate);
+        $orderCountD = OffOrder::whereBetween('created_at',[ $sevenDaysAgo,$currentDate])->count();
+        $totalSalesD = OffOrder::whereBetween('created_at', [$sevenDaysAgo,$currentDate])->sum('total');
+        $totalDisD = OffOrder::whereBetween('created_at', [$sevenDaysAgo,$currentDate])->sum('discount');
+        $items = OffOrder::with('tab', 'user', 'offorderdetails')->whereBetween('created_at', [$sevenDaysAgo,$currentDate])->get();
+        // $items = OffOrderDetails::with(['offorder.user', 'menu'])->whereDate('created_at', $currentDate)->get();
+
+        return view('report.weeklyreport', compact('items', 'orderCountD', 'totalSalesD', 'totalDisD'));
+    }
+    public function monthlyReport()
+    {
+        // Get the start of the last month
+        $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
+        
+        // Get the end of the last month
+        $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
+        $orderCountD = OffOrder::whereBetween('created_at',[$lastMonthStart, $lastMonthEnd])->count();
+        $totalSalesD = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('total');
+        $totalDisD = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('discount');
+        
+        // Retrieve records for the last month
+        $items = OffOrder::with('tab', 'user', 'offorderdetails')
+            ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
+            ->get();
+        
+        return view('report.monthlyreport', compact('items', 'orderCountD', 'totalSalesD', 'totalDisD'));
     }
     /**
      * Show the form for creating a new resource.

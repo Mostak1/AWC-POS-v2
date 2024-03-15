@@ -83,6 +83,8 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.
 
 Route::get('offorderdaily', [OffOrderController::class, 'dailyreport'])->name('offorderdaily');
 
+Route::get('monthlyreport', [OffOrderController::class, 'monthlyReport'])->name('monthlyreport');
+Route::get('weeklyreport', [OffOrderController::class, 'weeklyReport'])->name('weeklyreport');
 Route::get('dailyreport', [OffOrderDetailsController::class, 'dailyreport'])->name('dailyreport');
 Route::get('subcats/{cid}', [SubcategoryController::class, 'subcats']);
 Route::get('order', [MenuController::class, 'order'])->name('order');

@@ -43,7 +43,6 @@
                     <div class="row">
                         <div class="col-xl-3 col-md-6">
                             <div class="p-4  h-100 rounded-4 Larger shadow bg-white text-info mb-4">
-
                                 <div class="card-body">
                                     <i class="fa-solid fa-calendar"></i>
                                     Daily Order {{ $orderCountD ?? 00 }}
@@ -54,27 +53,24 @@
                                         <br> 
                                         <span>
                                             <i class="fa-solid fa-tags"></i> Daily Discount ={{ $totalDisD ?? 00 }}TK
-                                        </span>
+                                        </span> <br>
                                         <span>
                                             <i class="fa-solid fa-tags"></i> IPD Sale ={{ $ipdSale ?? 00 }}TK
-                                        </span>
+                                        </span> <br>
                                         <span>
                                             <i class="fa-solid fa-tags"></i> Food Panda Sale ={{ $foodPandaSale ?? 00 }}TK
-                                        </span>
+                                        </span> <br>
                                         <span>
                                             <i class="fa-solid fa-tags"></i> Pathao Sale ={{ $PathaoSale ?? 00 }}TK
-                                        </span>
+                                        </span> <br>
                                         <span>
-                                            <i class="fa-solid fa-tags"></i> Chairman Sir Discount ={{ $chairmanDis ?? 00 }}TK
-                                        </span>
+                                            <i class="fa-solid fa-tags"></i> Chairman/Guest Discount ={{ $chairmanDis ?? 00 }}TK
+                                        </span> <br>
                                         <br><span><i class="fa-solid fa-cart-arrow-down"></i> Net Sales =
                                             {{ $totalSalesD - $totalDisD ?? 00 }}TK</span>
                                     </div>
                                 </div>
-
-                                <a class="nav-link" href="{{ url('offorder') }}">View Details</a>
-
-
+                                <a class="nav-link" href="{{ url('dailyreport') }}">View Details</a>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
@@ -95,7 +91,7 @@
                                 </div>
 
                                 <div class=" d-flex align-items-center justify-content-between p-4">
-                                    <a class=" nav-link " href="{{ url('offorder') }}">View Details</a>
+                                    <a class=" nav-link " href="{{ url('weeklyreport') }}">View Details</a>
                                     <div class="small "><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
@@ -117,17 +113,17 @@
                                             {{ $totalSalesM - $totalDisM ?? 00 }}TK</span>
                                     </div>
                                 </div>
-                                <div class="fixed-bottom d-flex align-items-center justify-content-between">
-                                    <a class="small nav-link stretched-link" href="{{ url('offorder') }}">View Details</a>
-                                    <div class="small "><i class="fas fa-angle-right"></i></div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <a class="small nav-link" href="{{ url('monthlyreport') }}">View Details</a>
+                                    <div class="small"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
                             <div class="p-4  h-100 rounded-4 shadow bg-white text-danger mb-4">
                                 <div class="card-body">Danger Card</div>
-                                <div class="fixed-bottom d-flex align-items-center justify-content-between">
-                                    <a class="small nav-link stretched-link" href="{{ url('offorder') }}">View Details</a>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    {{-- <a class="small nav-link stretched-link" href="{{ url('offorder') }}">View Details</a> --}}
                                     <div class="small"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
