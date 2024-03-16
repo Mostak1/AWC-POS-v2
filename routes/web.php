@@ -81,6 +81,7 @@ Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.up
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
+Route::get('orderreport', [OffOrderController::class, 'orderReport']);
 Route::get('offorderdaily', [OffOrderController::class, 'dailyreport'])->name('offorderdaily');
 
 Route::get('monthlyreport', [OffOrderController::class, 'monthlyReport'])->name('monthlyreport');

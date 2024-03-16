@@ -76,7 +76,98 @@
             </div>
         </div>
     </div>
+    <div class="my-5">
+        <div class="card p-4">
+            <table class="table-responsive dataTable">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="tablebtn text-end">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            Product Name
+                        </th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($staffData as $product)
+                        <tr>
+                            <td>{{ $product['menuName'] }}</td>
+                            <td>{{ $product['quantity'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="card p-4">
+
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get data from PHP variables
+            var staffData = @json($staffData);
+            console.log(typeof staffData);
+            console.log('staffData:', staffData);
+
+            if (staffData.length === 0) {
+                console.log('No data to display.');
+                return;
+            }
+
+            // Prepare data for Chart.js
+            var labels = [];
+            var quantities = [];
+            var totals = [];
+
+            // Extract data for chart
+            for (var key in staffData) {
+                if (staffData.hasOwnProperty(key)) {
+                    var item = staffData[key];
+                    // Extract values for menuName, quantity, and total
+                    var menuName = item.menuName;
+                    var quantity = item.quantity;
+                    var total = item.total;
+                    // Process each item
+                    labels.push(menuName);
+                    quantities.push(quantity);
+                    totals.push(total);
+                }
+            }
+
+            console.log('labels:', labels);
+            console.log('quantities:', quantities);
+            console.log('totals:', totals);
+
+            // Create a bar chart using Chart.js
+            var ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: quantities,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: .1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 @endsection

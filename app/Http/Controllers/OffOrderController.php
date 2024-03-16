@@ -26,7 +26,7 @@ class OffOrderController extends Controller
      */
     public function index()
     {
-        $items = OffOrder::with('tab', 'user','payment')->get();
+        $items = OffOrder::with('tab', 'user', 'payment')->get();
         return view('offorder.index')->with('items', $items);
     }
     public function dailyreport()
@@ -51,31 +51,67 @@ class OffOrderController extends Controller
         $thirtyDaysAgo = Carbon::now()->subDays(30);
         $currentDate = Carbon::now();
         // dd($currentDate);
-        $orderCountD = OffOrder::whereBetween('created_at',[ $sevenDaysAgo,$currentDate])->count();
-        $totalSalesD = OffOrder::whereBetween('created_at', [$sevenDaysAgo,$currentDate])->sum('total');
-        $totalDisD = OffOrder::whereBetween('created_at', [$sevenDaysAgo,$currentDate])->sum('discount');
-        $items = OffOrder::with('tab', 'user', 'offorderdetails')->whereBetween('created_at', [$sevenDaysAgo,$currentDate])->get();
+        $orderCountD = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])->count();
+        $totalSalesD = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])->sum('total');
+        $totalDisD = OffOrder::whereBetween('created_at', [$sevenDaysAgo, $currentDate])->sum('discount');
+        $items = OffOrder::with('tab', 'user', 'offorderdetails')->whereBetween('created_at', [$sevenDaysAgo, $currentDate])->get();
         // $items = OffOrderDetails::with(['offorder.user', 'menu'])->whereDate('created_at', $currentDate)->get();
 
         return view('report.weeklyreport', compact('items', 'orderCountD', 'totalSalesD', 'totalDisD'));
     }
     public function monthlyReport()
     {
+
         // Get the start of the last month
         $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
-        
+
         // Get the end of the last month
         $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
-        $orderCountD = OffOrder::whereBetween('created_at',[$lastMonthStart, $lastMonthEnd])->count();
+        $orderCountD = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
         $totalSalesD = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('total');
         $totalDisD = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('discount');
-        
+
         // Retrieve records for the last month
         $items = OffOrder::with('tab', 'user', 'offorderdetails')
             ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
             ->get();
-        
-        return view('report.monthlyreport', compact('items', 'orderCountD', 'totalSalesD', 'totalDisD'));
+
+        // Fetch orders data
+        $data = OffOrderDetails::with('menu.category', 'off_order.payment')->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->get();
+
+        // Filter and aggregate data
+        $staffData = [];
+        $staffDataJson = json_encode($staffData);
+        // Single Data 
+        $staffDis = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->sum('discount');
+        $staffSale = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->where('active', 2)->sum('total');
+
+        foreach ($data as $order) {
+            $orderDate = substr($order->created_at, 0, 10); // Extract date from created_at
+
+            // Check if the order date matches the selected date and the order is not active
+            // if ($order->off_order->active == 2) {
+            $menuId = $order->menu_id;
+            $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
+            $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
+
+            // If menu id is not in staffData, add it; otherwise, update quantity and total
+            if (!isset($staffData[$menuId])) {
+                $staffData[$menuId] = [
+                    'menuName' => $order->menu->name,
+                    'category' => $order->menu->category->name,
+                    'date' => $order->created_at,
+                    'quantity' => $order->quantity,
+                    'price' => $order->menu->price,
+                    'total' => $order->total,
+                ];
+            } else {
+                $staffData[$menuId]['quantity'] += $order->quantity;
+                $staffData[$menuId]['total'] += $order->total;
+            }
+            // }
+        }
+        return view('report.monthlyreport', compact('staffDataJson', 'staffData', 'items', 'orderCountD', 'totalSalesD', 'totalDisD'));
     }
     /**
      * Show the form for creating a new resource.
@@ -120,7 +156,7 @@ class OffOrderController extends Controller
             $payment->cash = $request->paymentMethod === 'cash' ? 1 : 0;
             $payment->e_cash = in_array($request->paymentMethod, ['bkash', 'card']) ? 1 : 0;
             $payment->method = $request->paymentMethod;
-            $payment->total = $request->totalbill-$request->discount;
+            $payment->total = $request->totalbill - $request->discount;
 
             // Set transaction number only for 'bkash' payments
             if ($request->paymentMethod === 'bkash' || $request->paymentMethod === 'card') {
@@ -264,7 +300,7 @@ class OffOrderController extends Controller
      */
     public function destroy(OffOrder $offOrder)
     {
-       
+
         // OffOrderDetails::where('off_order_id', $offOrder->id)->delete();
         $payment = Payment::where('order_id', $offOrder->id)->first();
 
@@ -273,7 +309,7 @@ class OffOrderController extends Controller
         } else {
             dd('No payment found for the given order.');
         }
-        
+
 
         OffOrderDetails::where('off_order_id', $offOrder->id)->delete();
         if ($offOrder->delete()) {
@@ -300,5 +336,79 @@ class OffOrderController extends Controller
     {
         $items = OrderLog::with('user')->get();
         return view('offorder.log', compact('items'));
+    }
+
+    public function orderReport(Request $request)
+    {
+
+        // Retrieve filter parameters from the request
+        $filterDate = $request->input('filterDate');
+        $filterCategory = $request->input('filterCategory');
+        $filterStaff = $request->input('filterStaff');
+        $filterStartDate = $request->input('filterStartDate');
+        $filterEndDate = $request->input('filterEndDate');
+        $filterStartTime = $request->input('filterStartTime');
+        $filterEndTime = $request->input('filterEndTime');
+
+        // Start building the query with eager loading
+        $query = OffOrderDetails::with('menu.category', 'off_order.payment');
+
+        // Apply filters conditionally based on provided parameters
+        if ($filterStartDate && $filterEndDate) {
+            $query->whereBetween('created_at', [$filterStartDate, $filterEndDate]);
+        }
+
+        if ($filterDate) {
+            // Assuming $filterDate represents the start date of a date range
+            $query->whereDate('created_at', $filterDate);
+        }
+
+        if ($filterStartTime && $filterEndTime) {
+            $query->whereTime('created_at', '>=', $filterStartTime)
+                ->whereTime('created_at', '<=', $filterEndTime);
+        }
+
+        // Add more conditions based on other filter parameters if needed
+        // Example: Category and Staff filtering
+        if ($filterCategory) {
+            $query->whereHas('menu.category', function ($q) use ($filterCategory) {
+                $q->where('name', $filterCategory);
+            });
+        }
+
+        if ($filterStaff) {
+            //$query->where('active', $filterStaff); // Assuming there's a column named staff_or_customer
+            $query->whereHas('off_order', function ($q) use ($filterStaff) {
+                $q->where('active', $filterStaff); });
+        }
+
+        // Retrieve filtered data
+        $data = $query->get();
+
+        // Filter and aggregate data
+        $staffData = [];
+        $staffDataJson = json_encode($staffData);
+        foreach ($data as $order) {
+            $menuId = $order->menu_id;
+            $cDiscount = $order->menu->price - round((($order->menu->category->discount * $order->menu->price) / 100) / 5) * 5;
+            $sDiscount = $cDiscount - round((($order->menu->discount * $cDiscount) / 100) / 5) * 5;
+
+            // If menu id is not in staffData, add it; otherwise, update quantity and total
+            if (!isset($staffData[$menuId])) {
+                $staffData[$menuId] = [
+                    'menuName' => $order->menu->name,
+                    'category' => $order->menu->category->name,
+                    'date' => $order->created_at,
+                    'quantity' => $order->quantity,
+                    'price' => $order->menu->price,
+                    'total' => $order->total,
+                ];
+            } else {
+                $staffData[$menuId]['quantity'] += $order->quantity;
+                $staffData[$menuId]['total'] += $order->total;
+            }
+        }
+        return response()->json($staffData);
+        return view('report.monthlyreport', compact('staffDataJson', 'staffData', 'items', 'orderCountD', 'totalSalesD', 'totalDisD'));
     }
 }

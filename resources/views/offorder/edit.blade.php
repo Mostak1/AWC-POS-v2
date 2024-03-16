@@ -40,11 +40,18 @@
                     {!! Form::text('reason', null, ['required', 'class' => 'form-control form-control-profile', 'id' => 'reason']) !!}
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
-                    <label for="active" class="form-label">Active :</label>
-                    {!! Form::text('active', null, ['required', 'class' => 'form-control form-control-profile', 'id' => 'active']) !!}
+                    <label for="active" class="form-label">Customer Group :</label>
+                    {!! Form::select('active', [
+                        '1' =>'Customer',
+                        '2'=>'Staff',
+                        '3'=>'Pathao', 
+                        '4'=>'Food Panda',
+                        '5'=>'Chairman Sir',
+                        '6'=>'IPD',
+                    ], null,['required', 'class' => 'form-control form-control-profile', 'id' => 'active']) !!}
                 </div>
 
-
+                
             </div>
             <div class="form-group">
                 {!! Form::submit('Update Orders', ['class' => 'mt-3 btn btn-info btn-profile btn-block']) !!}

@@ -55,7 +55,7 @@ class HomeController extends Controller
         $orderCountW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
 
         // Count orders for the last 30 days
-        $orderCountM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])->count();
+        $orderCountM = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])->count();
 
         // Calculate total sales for the last 7 days
         $totalSalesW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
@@ -66,10 +66,10 @@ class HomeController extends Controller
             ->sum('discount');
 
         // Calculate total sales for the last 30 days
-        $totalSalesM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])
+        $totalSalesM = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->sum('total');
-        $totalDisM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])
+        $totalDisM = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->sum('discount');
 
@@ -79,7 +79,7 @@ class HomeController extends Controller
         $salesCountW = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->count();
-        $salesCountM = OffOrder::whereBetween('created_at', [$thirtyDaysAgo, $currentDate])
+        $salesCountM = OffOrder::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
 
             ->count();
 

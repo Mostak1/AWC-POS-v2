@@ -31,7 +31,6 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h4 class="m-0 font-weight-bold text-info">Order Report Table</h4>
             <div class="m-0 font-weight-bold btn btn-outline-info" id="submitp"><i class="fa-solid fa-print"></i></div>
-
         </div>
         <div class="card p-4 d-print-block">
 
@@ -50,7 +49,6 @@
                                     <th>Quantity</th>
                                     <th>Price</th>
                                     <th>Total</th>
-
                                     <!-- Add more table headers based on your new filters -->
                                 </tr>
                             </thead>
@@ -291,7 +289,7 @@
 
                 </div>
                 <div class="py-2 ptext d-flex flex-row align-items-center justify-content-between">
-                        <div class=" bold">Cash on Hand: {{ $totalSalesD-$totalDisD-$foodPandaSale-$pathaoSale-$ipdSale }}TK;</div>
+                        <div class=" bold">Cash on Hand: {{ $totalSalesD+$pathaoDis+$foodPandaDis-$totalDisD-$foodPandaSale-$pathaoSale-$ipdSale-$bkash-$card }}TK;</div>
                         <div class="">Bkash:{{ $bkash }}TK;</div>
                         <div class=""> Card: {{ $card }}TK</div>
                 </div>

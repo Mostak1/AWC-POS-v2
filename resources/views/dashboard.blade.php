@@ -50,7 +50,7 @@
                                     <div class="card-body">
                                         <i class="fa-solid fa-weight-scale"></i>
                                         Daily Sell = {{ $totalSalesD ?? 00 }}TK From {{ $salesCountD ?? 00 }} Orders
-                                        <br> 
+                                        <br>
                                         <span>
                                             <i class="fa-solid fa-tags"></i> Daily Discount ={{ $totalDisD ?? 00 }}TK
                                         </span> <br>
@@ -64,7 +64,8 @@
                                             <i class="fa-solid fa-tags"></i> Pathao Sale ={{ $PathaoSale ?? 00 }}TK
                                         </span> <br>
                                         <span>
-                                            <i class="fa-solid fa-tags"></i> Chairman/Guest Discount ={{ $chairmanDis ?? 00 }}TK
+                                            <i class="fa-solid fa-tags"></i> Chairman/Guest Discount
+                                            ={{ $chairmanDis ?? 00 }}TK
                                         </span> <br>
                                         <br><span><i class="fa-solid fa-cart-arrow-down"></i> Net Sales =
                                             {{ $totalSalesD - $totalDisD ?? 00 }}TK</span>
@@ -173,7 +174,7 @@
                                         @foreach ($items as $offorder)
                                             <tr>
                                                 <td>{{ $loop->index + 1 }}</td>
-                                                <td>{{$offorder->user->name }}</td>
+                                                <td>{{ $offorder->user->name }}</td>
                                                 <td>
                                                     @foreach ($offorder->offorderdetails as $detail)
                                                         <div class="">
@@ -185,7 +186,7 @@
                                                 <td>{{ $offorder->payment->method }}</td>
                                                 <td>{{ $offorder->total }}</td>
                                                 <td>{{ $offorder->discount }}</td>
-                                                <td>{{ $offorder->reason . $offorder->id}}</td>
+                                                <td>{{ $offorder->reason . $offorder->id }}</td>
                                                 <td>{{ $offorder->total - $offorder->discount }}</td>
                                                 <td>
                                                     {{-- <button class="btn btn-outline-info print-btn"
@@ -195,7 +196,8 @@
                                                         data-bs-target="#exampleModal">
                                                         Print
                                                     </button> --}}
-                                                    <a class="btn btn-outline-info print-btn" href="{{url('moneyReceipt/'.$offorder->id)}}">Print</a>
+                                                    <a class="btn btn-outline-info print-btn"
+                                                        href="{{ url('moneyReceipt/' . $offorder->id) }}">Print</a>
 
                                                 </td>
                                             </tr>
@@ -205,19 +207,19 @@
                             </div>
                         </div>
                     </div>
-                    
-                        <div class="card p-4">
-                            <form action="{{ route('reportPage') }}" method="post">
-                                @csrf
-                                <div class="mb-3 w-25">
-                                    <label for="date" class="form-label">Date Select</label>
-                                    <input type="date" class="form-control" id="date" placeholder="Enter Date"
-                                        name="date">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Show Report</button>
-                            </form>
-                        </div>
-                   
+
+                    <div class="card p-4">
+                        <form action="{{ route('reportPage') }}" method="post">
+                            @csrf
+                            <div class="mb-3 w-25">
+                                <label for="date" class="form-label">Date Select</label>
+                                <input type="date" class="form-control" id="date" placeholder="Enter Date"
+                                    name="date">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Show Report</button>
+                        </form>
+                    </div>
+
                     <div class="p-4 rounded-4 Larger shadow  bg-white card-hover  my-5">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -637,7 +639,7 @@
 @section('script')
     <!-- DataTables JavaScript -->
     {{-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.9/js/buttons.print.min.js"></script> --}}
-    <script src="{{asset('assets/js/chart.js')}}"></script>
+    <script src="{{ asset('assets/js/chart.js') }}"></script>
     <script>
         $(document).ready(function() {
             function orderPrint(items) {
@@ -748,22 +750,22 @@
                     $('#orderDetails').DataTable().destroy();
                 }
                 $.ajax({
-                    url: '{{ url('orderdetailsapi') }}',
+                    url: '{{ url('orderreport') }}',
                     method: 'GET',
                     data: {
-                        date: filterDateInput.val(),
-                        category: filterCategoryInput.val(),
-                        startDate: filterStartDateInput.val(),
-                        endDate: filterEndDateInput.val(),
-                        startTime: filterStartTimeInput.val(),
-                        endTime: filterEndTimeInput.val(),
-                        staff: staff.val(),
+                        filterDate: filterDateInput.val(),
+                        filterCategory: filterCategoryInput.val(),
+                        filterStartDate: filterStartDateInput.val(),
+                        filterEndDate: filterEndDateInput.val(),
+                        filterStartTime: filterStartTimeInput.val(),
+                        filterEndTime: filterEndTimeInput.val(),
+                        filterStaff: staff.val(),
                     },
                     success: function(data) {
-                        // console.log(data);
+                        console.log('new', data);
                         processData(data);
-                        staffdata(data);
-                        customerdata(data);
+                        // staffdata(data);
+                        // customerdata(data);
                     },
                     error: function(error) {
                         console.error('Error fetching data:', error);
@@ -773,134 +775,21 @@
             }
             // Function to process and display the data
             function processData(data) {
-                function getCurrentDate() {
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                    var yyyy = today.getFullYear();
-
-                    return yyyy + '-' + mm + '-' + dd;
-                }
-                console.log(getCurrentDate());
-                if (
-                    filterDateInput.val() == '' &&
-                    filterCategoryInput.val() == '' &&
-                    filterStartDateInput.val() == '' &&
-                    filterEndDateInput.val() == '' &&
-                    filterStartTimeInput.val() == '' &&
-                    filterEndTimeInput.val() == '' &&
-                    staff.val() == ''
-                ) {
-                    var selectedDate = getCurrentDate();
-                } else {
-                    var selectedDate = filterDateInput.val();
-                }
-
-                // Populate the category filter dropdown dynamically
-                var uniqueCategories = [...new Set(data.map(order => order.menu.category.name))];
-                var categorySelect = $('#filterCategory');
-
-                // Filter data based on the selected date and additional criteria
-                var filteredData = data.filter(function(order) {
-                    var orderDate = order.created_at.split('T')[0];
-
-                    // Assuming date format from the API is in 'YYYY-MM-DD'
-                    if (selectedDate && orderDate !== selectedDate) {
-                        return false;
-                    }
-
-                    // Add more conditions for other filters (category, date range, time range)
-                    if (filterCategoryInput.val() && order.menu.category.name !== filterCategoryInput
-                        .val()) {
-                        return false;
-                    }
-                    if (order.off_order.active == staff.val()) {
-                        return false;
-                    }
-
-
-                    // Date range filter
-                    if (filterStartDateInput.val() && filterEndDateInput.val()) {
-                        var orderDateTime = new Date(order.created_at);
-                        var filterStartDate = new Date(filterStartDateInput.val());
-                        var filterEndDate = new Date(filterEndDateInput.val());
-
-                        if (orderDateTime < filterStartDate || orderDateTime > filterEndDate) {
-                            return false;
-                        }
-                    }
-
-                    // Time range filter
-                    if (filterStartTimeInput.val() && filterEndTimeInput.val()) {
-                        var orderTime = order.created_at.split('T')[1].substring(0, 5);
-                        var filterStartTime = filterStartTimeInput.val();
-                        var filterEndTime = filterEndTimeInput.val();
-
-                        if (orderTime < filterStartTime || orderTime > filterEndTime) {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
                 // Clear existing rows
                 tbody.empty();
                 tfoot.empty();
-                // Clear existing options
 
-                // Create an object to store aggregated data based on menu id
-                var aggregatedData = {};
-
-                // Iterate through each order in the filtered data
-                filteredData.forEach(function(order) {
-                    var menuId = order.menu_id;
-                    var reason = order.off_order.reason;
-                    console.log(menuId, reason);
-                    // If menu id is not in aggregatedData, add it; otherwise, update quantity and total
-
-                    if (!aggregatedData[menuId]) {
-                        var cDiscount = order.menu.price - Math.round(((order.menu.category.discount * order
-                                .menu.price) / 100) /
-                            5) * 5;
-                        var sDiscount = cDiscount - Math.round(((order.menu.discount * cDiscount) / 100) /
-                            5) * 5;
-
-                        if (order.off_order.active == 2) {
-                            aggregatedData[menuId] = {
-                                menuName: order.menu.name,
-                                category: order.menu.category.name,
-                                date: order.created_at,
-                                quantity: order.quantity,
-                                price: sDiscount,
-                                total: order.total,
-                            };
-                        } else if (order.off_order.active == 1) {
-                            aggregatedData[menuId] = {
-                                menuName: order.menu.name,
-                                category: order.menu.category.name,
-                                date: order.created_at,
-                                quantity: order.quantity,
-                                price: cDiscount,
-                                total: order.total,
-                            };
-                        }
-
-                    } else {
-                        aggregatedData[menuId].quantity += order.quantity;
-                        aggregatedData[menuId].total += order.total;
-                    }
-
-                });
-
-                // ...
-                console.log(aggregatedData);
                 console.log(data);
 
-                var filterdataArray = $.map(aggregatedData, function(value) {
+                var filterdataArray = $.map(data, function(value) {
                     return value;
                 });
 
                 console.log(filterdataArray);
-
+                var monthNames = [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ];
                 $('#orderDetails').DataTable({
                     data: filterdataArray,
                     columns: [{
@@ -919,7 +808,13 @@
                             data: 'total'
                         },
                         {
-                            data: 'date'
+                            data: 'date',
+                            render: function(data) {
+                                var date = new Date(data);
+                                var formattedDate = date.getDate() + ' ' + monthNames[date
+                                    .getMonth()] + ' ' + date.getFullYear();
+                                return formattedDate;
+                            }
                         }
                     ],
                     buttons: [
@@ -934,9 +829,9 @@
                 var subTotalQuantity = 0;
                 var subTotalTotal = 0;
 
-                for (var menuId in aggregatedData) {
-                    subTotalQuantity += aggregatedData[menuId].quantity;
-                    subTotalTotal += aggregatedData[menuId].total;
+                for (var menu in data) {
+                    subTotalQuantity += data[menu].quantity;
+                    subTotalTotal += data[menu].total;
                 }
 
                 // Append a new row at the bottom with the sub-total
@@ -981,15 +876,16 @@
             function fetchData1() {
 
                 $.ajax({
-                    url: '{{ url('orderdetailsapi') }}',
+                    url: '{{ url('orderreport') }}',
                     method: 'GET',
                     data: {
-                        date: filterDateInput1.val(),
-                        category: filterCategoryInput1.val(),
-                        startDate: filterStartDateInput1.val(),
-                        endDate: filterEndDateInput1.val(),
-                        startTime: filterStartTimeInput1.val(),
-                        endTime: filterEndTimeInput1.val(),
+                        filterDate: filterDateInput1.val(),
+                        filterCategory: filterCategoryInput1.val(),
+                        filterStartDate: filterStartDateInput1.val(),
+                        filterEndDate: filterEndDateInput1.val(),
+                        filterStartTime: filterStartTimeInput1.val(),
+                        filterEndTime: filterEndTimeInput1.val(),
+                        filterStaff: staff1.val(),
                     },
                     success: function(data) {
                         // console.log(data);
@@ -1011,91 +907,13 @@
             }
             // Function to process and display the data
             function processData1(data) {
-                var selectedDate1 = filterDateInput1.val();
-                // Populate the category filter dropdown dynamically
-                var uniqueCategories1 = [...new Set(data.map(order => order.menu.category.name))];
-                var categorySelect1 = $('#filterCategory1');
-                // Filter data based on the selected date and additional criteria
-                var filteredData1 = data.filter(function(order) {
-                    var orderDate1 = order.created_at.split('T')[0];
-
-                    // Assuming date format from the API is in 'YYYY-MM-DD'
-                    if (selectedDate1 && orderDate1 !== selectedDate1) {
-                        return false;
-                    }
-
-                    // Add more conditions for other filters (category, date range, time range)
-                    if (filterCategoryInput1.val() && order.menu.category.name !==
-                        filterCategoryInput1
-                        .val()) {
-                        return false;
-                    }
-                    if (order.off_order.active == staff1.val()) {
-                        return false;
-                    }
-                    // Date range filter
-                    if (filterStartDateInput1.val() && filterEndDateInput1.val()) {
-                        var orderDateTime1 = new Date(order.created_at);
-                        var filterStartDate1 = new Date(filterStartDateInput1.val());
-                        var filterEndDate1 = new Date(filterEndDateInput1.val());
-
-                        if (orderDateTime1 < filterStartDate1 || orderDateTime1 >
-                            filterEndDate1) {
-                            return false;
-                        }
-                    }
-
-                    // Time range filter
-                    if (filterStartTimeInput1.val() && filterEndTimeInput1.val()) {
-                        var orderTime1 = order.created_at.split('T')[1].substring(0, 5);
-                        var filterStartTime1 = filterStartTimeInput1.val();
-                        var filterEndTime1 = filterEndTimeInput1.val();
-
-                        if (orderTime1 < filterStartTime1 || orderTime1 > filterEndTime1) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-
-                });
-
-
-
-                // Create an object to store aggregated data based on menu id
-                var aggregatedData1 = {};
-
-                // Iterate through each order in the filtered data
-                filteredData1.forEach(function(order) {
-                    var menuId1 = order.menu_id;
-
-                    // If menu id is not in aggregatedData, add it; otherwise, update quantity and total
-                    if (!aggregatedData1[menuId1]) {
-                        aggregatedData1[menuId1] = {
-                            menuName1: order.menu.name,
-                            category1: order.menu.category.name,
-                            date1: order.created_at,
-                            quantity1: order.quantity,
-                            total1: order.total
-                        };
-                    } else {
-                        aggregatedData1[menuId1].quantity1 += order.quantity;
-                        aggregatedData1[menuId1].total1 += order.total;
-                    }
-                });
-
-                // ...
-
-
-
-
                 // Convert aggregated data to arrays for Chart.js
                 var labels = [];
                 var quantities = [];
 
-                for (var menuId1 in aggregatedData1) {
-                    labels.push(aggregatedData1[menuId1].menuName1);
-                    quantities.push(aggregatedData1[menuId1].quantity1);
+                for (var menuId1 in data) {
+                    labels.push(data[menuId1].menuName);
+                    quantities.push(data[menuId1].quantity);
                 }
 
                 // Destroy the existing chart instance (if it exists)
