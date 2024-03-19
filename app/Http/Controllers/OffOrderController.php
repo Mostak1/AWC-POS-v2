@@ -384,6 +384,8 @@ class OffOrderController extends Controller
 
         // Retrieve filtered data
         $data = $query->get();
+        $totalItem = $query->count();
+        $totalsale = $query->sum('total');
 
         // Filter and aggregate data
         $staffData = [];
@@ -408,7 +410,12 @@ class OffOrderController extends Controller
                 $staffData[$menuId]['total'] += $order->total;
             }
         }
-        return response()->json($staffData);
-        return view('report.monthlyreport', compact('staffDataJson', 'staffData', 'items', 'orderCountD', 'totalSalesD', 'totalDisD'));
+        return response()->json([
+            'staffData' => $staffData,
+            'totalItem' => $totalItem,
+            'totalsale' => $totalsale
+        ]);
+        
+        // return view('report.monthlyreport', compact('staffDataJson', 'staffData', 'items', 'orderCountD', 'totalSalesD', 'totalDisD'));
     }
 }

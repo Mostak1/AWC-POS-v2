@@ -211,13 +211,13 @@
                             <span>TK</span>
                             <div class="d-print-none">
                                 <div class="row row-cols-2 g-2">
-                                <button type="button" class="col my-2 btn btn-outline-success" id="allowDiscount">
-                                    Apply Discount
-                                </button>
-                                <div class="col">
-                                    <input type="text" id="reason" class="form-control border border-danger"
-                                        placeholder="Input Reason">
-                                </div>
+                                    <button type="button" class="col my-2 btn btn-outline-success" id="allowDiscount">
+                                        Apply Discount
+                                    </button>
+                                    <div class="col">
+                                        <input type="text" id="reason" class="form-control border border-danger"
+                                            placeholder="Input Reason">
+                                    </div>
                                 </div>
                                 <div class="row row-cols-2 dis-apply d-none g-2">
                                     <div class="col">
@@ -230,7 +230,16 @@
                                             <option value="20">20%</option>
                                         </select>
                                     </div>
-                                    
+
+                                </div>
+                                <div class="row row-cols-2 g-2">
+                                    <div class="col">
+                                        <label class="form-label" for="deliveryCharge">Delivery Charge:</label>
+                                    </div>
+                                    <div class="col">
+                                        <input class="form-control" value="0" type="number" id="deliveryCharge">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -879,12 +888,15 @@
             $('#oneTimeDiscount').on('change', function() {
                 payAmount();
             });
+            $('#deliveryCharge').on('change', function() {
+                payAmount();
+            });
 
             function payAmount() {
                 var tbill = parseFloat($('#total-order').text());
                 var tax = parseFloat($('#tax').text());
                 // alert('Pay amount');
-
+                var deliveryCharge = parseFloat($('#deliveryCharge').val());
                 var staffDis = parseFloat($('#staffs').val());
                 var oneDis = parseFloat($('#oneTimeDiscount').val());
                 console.log(staffDis + oneDis);
@@ -894,15 +906,20 @@
                 } else if (oneDis < staffDis) {
 
                     var prediscount = tbill * staffDis * 0.01;
+                } else if (deliveryCharge > 0) {
+
+                    var prediscount = 40;
+
                 } else {
                     var prediscount = 0;
-                }
+                };
                 console.log(prediscount);
                 var discount = prediscount.toFixed(0);
-                var num = tbill - discount; // Assuming you want to apply a 20% discount
+                var num = tbill + deliveryCharge - discount; // Assuming you want to apply a 20% discount
                 $('#total-order2').text(num); // Update the total order amount
                 $('#discountPer').text(staffDis);
                 $('#discountComment').text(discount + ' Tk Discount Apply');
+
 
                 // var pattern = /^\\+8801[0-9]{9}$/;
                 // if (pattern.test(mobileNumber)) {
@@ -941,13 +958,13 @@
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
                 var sInvoice = $('#invoiceStaff').text();
-               
+
 
                 // Get the values of the 'data-sname' attribute and the text content
                 let sNameAttribute = selectedOption.data('sname');
                 let idAttr = selectedOption.data('id');
                 let mobileAttr = selectedOption.data('mobile');
-               
+
                 let sNameText = selectedOption.text();
                 if (sInvoice === "Staff-Invoice" && staff === 0) {
 
@@ -1084,4 +1101,4 @@
 
         });
     </script>
-@endsection 
+@endsection

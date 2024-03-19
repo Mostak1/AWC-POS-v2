@@ -26,7 +26,7 @@ class OffOrderDetailsController extends Controller
         $orderCountD = OffOrderDetails::whereDate('created_at', $currentDate)->count();
 
         $totalSalesD = OffOrder::whereDate('created_at', $currentDate)->sum('total');
-        $items = OffOrderDetails::with(['offorder.user', 'menu'])->whereDate('created_at', $currentDate)->get();
+        $items = OffOrderDetails::with(['off_order.user', 'menu'])->whereDate('created_at', $currentDate)->get();
 
         return view('offorderdetails.dailyreport', compact('items', 'orderCountD', 'totalSalesD'));
     }

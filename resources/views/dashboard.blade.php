@@ -71,7 +71,7 @@
                                             {{ $totalSalesD - $totalDisD ?? 00 }}TK</span>
                                     </div>
                                 </div>
-                                <a class="nav-link" href="{{ url('dailyreport') }}">View Details</a>
+                                <a class="nav-link" href="{{ url('offorderdaily') }}">View Details</a>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
@@ -761,9 +761,10 @@
                         filterEndTime: filterEndTimeInput.val(),
                         filterStaff: staff.val(),
                     },
-                    success: function(data) {
+                    success: function(datas) {
+                        var data = datas.staffData;
                         console.log('new', data);
-                        processData(data);
+                        processData(datas);
                         // staffdata(data);
                         // customerdata(data);
                     },
@@ -774,11 +775,11 @@
 
             }
             // Function to process and display the data
-            function processData(data) {
+            function processData(datas) {
                 // Clear existing rows
                 tbody.empty();
                 tfoot.empty();
-
+                var data = datas.staffData;
                 console.log(data);
 
                 var filterdataArray = $.map(data, function(value) {
@@ -826,13 +827,10 @@
 
                 });
 
-                var subTotalQuantity = 0;
-                var subTotalTotal = 0;
+                var subTotalQuantity = datas.totalItem;
 
-                for (var menu in data) {
-                    subTotalQuantity += data[menu].quantity;
-                    subTotalTotal += data[menu].total;
-                }
+                var subTotalTotal = datas.totalsale;
+
 
                 // Append a new row at the bottom with the sub-total
                 var subTotalRow = '<div class="sub-total"><span >Total Quantity: </span><span class="me-2">' +
@@ -887,9 +885,12 @@
                         filterEndTime: filterEndTimeInput1.val(),
                         filterStaff: staff1.val(),
                     },
-                    success: function(data) {
+                    success: function(datas) {
                         // console.log(data);
+                        var data = datas.staffData;
+                        console.log('new', data);
                         processData1(data);
+
 
                         // Reset filter input values after processing the data
                         // filterDateInput1.val('');
