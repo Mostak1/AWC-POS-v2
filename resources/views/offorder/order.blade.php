@@ -232,7 +232,18 @@
                                     </div>
 
                                 </div>
-                                <div class="row row-cols-2 g-2">
+                                <div class="row row-cols-4 g-2">
+                                    <div class="col">
+                                        <label class="form-label" for="deliveryDis">Delivery Discount:</label>
+                                    </div>
+                                    <div class="col">
+                                        <select name="" id="deliveryDis" class="form-control">
+                                            <option value="100">Free</option>
+                                            <option value="40">40Tk</option>
+                                            <option value="50">50Tk</option>
+                                            <option value="60">60Tk</option>
+                                        </select>
+                                    </div>
                                     <div class="col">
                                         <label class="form-label" for="deliveryCharge">Delivery Charge:</label>
                                     </div>
@@ -891,12 +902,16 @@
             $('#deliveryCharge').on('change', function() {
                 payAmount();
             });
+            $('#deliveryDis').on('change', function() {
+                payAmount();
+            });
 
             function payAmount() {
                 var tbill = parseFloat($('#total-order').text());
                 var tax = parseFloat($('#tax').text());
                 // alert('Pay amount');
                 var deliveryCharge = parseFloat($('#deliveryCharge').val());
+                var deliveryDis = parseFloat($('#deliveryDis').val());
                 var staffDis = parseFloat($('#staffs').val());
                 var oneDis = parseFloat($('#oneTimeDiscount').val());
                 console.log(staffDis + oneDis);
@@ -907,8 +922,12 @@
 
                     var prediscount = tbill * staffDis * 0.01;
                 } else if (deliveryCharge > 0) {
+                    if (deliveryDis === 100) {
+                        var prediscount = deliveryCharge;
+                    } else {
 
-                    var prediscount = 40;
+                        var prediscount = deliveryDis;
+                    }
 
                 } else {
                     var prediscount = 0;
@@ -919,13 +938,6 @@
                 $('#total-order2').text(num); // Update the total order amount
                 $('#discountPer').text(staffDis);
                 $('#discountComment').text(discount + ' Tk Discount Apply');
-
-
-                // var pattern = /^\\+8801[0-9]{9}$/;
-                // if (pattern.test(mobileNumber)) {
-                // } else {
-                //     $('#total-order2').text(tbill.toFixed(2)); // Update the total order amount without discount
-                // }
             }
 
             // order Submitted
