@@ -83,7 +83,7 @@ class CustomerController extends Controller
                 'discount_id' => $request->discount_id,
                 'discount' => $request->discount,
                 'mobile' => $request->mobile,
-                'address' => $request->place . ',' . $request->address ?? 'No Address',
+                'address' => $request->place.$request->address,
                 'card_number' => 'green' . Str::random(7),
                 'valid_date' => $thirtyDaysAgo,
                 'active_date' => $currentDate,
@@ -112,9 +112,13 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
+        $user = User::find($customer->user_id);
+        // dd($user->name);
+        
         $discount = Discount::pluck('name', 'id');
         $menu = Menu::where('subcategory_id', 8)->pluck('name', 'id');
-        return view('customer.edit', compact('customer', 'menu', 'discount'));
+        $places = DB::table('places')->pluck('place_name as name', 'id');
+        return view('customer.edit', compact('places','customer', 'menu', 'user'));
         //
     }
 
@@ -123,10 +127,20 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        $request->validate([
-            'card_status' => ['required'],
-            // 'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
-        ]);
+        // $request->validate([
+        //     'card_status' => ['required'],
+        //     // 'mobile' => ['required', 'string', 'regex:/^01[0-9]{9}$/','unique:'.Customer::class],
+        // ]);
+        $user = User::find($request->user_id);
+        if ($user) {
+            if ($request->name) {
+                $user->name = $request->name;
+            }
+            if ($request->email) {
+                $user->email = $request->email;
+            }
+            $user->save();
+        }
         $currentDate = Carbon::now();
         $thirtyDaysAgo = Carbon::now()->addDays(31);
         if ($request->mobile) {

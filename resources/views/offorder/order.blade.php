@@ -145,7 +145,25 @@
                         </div>
                         <div class=" d-print-none staffname text-center">
                             <div class="form-group">
-                                <div class="input-group text-info">
+                                <div class="input-group text-danger my-2">
+                                    <select name="saleCategory" id="saleCategory" class="form-control select2">
+                                        <option data-category="1" data-active="1" value="0">Dine In</option>
+                                        <option data-category="1" data-active="1" value="0">Take Out</option>
+                                        <option data-category="1" data-active="7" value="0">Delivery</option>
+                                        <option data-category="2" data-mobile="0" data-active="3" data-sname="Pathao"
+                                            value="26.25">Pathao
+                                        </option>
+                                        <option data-category="2" data-mobile="0" data-active="4" data-sname="Food Panda"
+                                            value="32.5">Food
+                                            Panda</option>
+                                        <option data-category="2" data-mobile="0" data-active="6" data-sname="IPD"
+                                            value="0">IPD</option>
+                                        <option data-category="2" data-mobile="0" data-active="5" data-sname="IPD"
+                                            value="100">Chairman
+                                            Sir/Guest</option>
+                                    </select>
+                                </div>
+                                <div id="customerSection" class="input-group text-info">
                                     {{-- <label for="staffs">Staff Name</label> 
                                     <option data-mobile="0" data-active="1" data-name="0" value="0">Walk In
                                             Customer</option>
@@ -176,6 +194,7 @@
                                         data-bs-target="#exampleModal">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
+                                    <div id="customerEdit" class="input-group-text"></div>
 
                                 </div>
                             </div>
@@ -210,13 +229,13 @@
                             <span id="total-order"></span>
                             <span>TK</span>
                             <div class="d-print-none">
-                                <div class="row row-cols-2 g-2">
-                                    <button type="button" class="col my-2 btn btn-outline-success" id="allowDiscount">
-                                        Apply Discount
+                                <div class="row g-2">
+                                    <button type="button" class="col-4 my-2 btn btn-outline-success" id="allowDiscount">
+                                        Discount
                                     </button>
-                                    <div class="col">
+                                    <div class="col-8">
                                         <input type="text" id="reason" class="form-control border border-danger"
-                                            placeholder="Input Reason">
+                                            placeholder="Input Comment">
                                     </div>
                                 </div>
                                 <div class="row row-cols-2 dis-apply d-none g-2">
@@ -232,9 +251,9 @@
                                     </div>
 
                                 </div>
-                                <div class="row row-cols-4 g-2">
+                                <div class="row saleCategory d-none row-cols-4 g-2">
                                     <div class="col">
-                                        <label class="form-label" for="deliveryDis">Delivery Discount:</label>
+                                        <label class="form-label" for="deliveryDis">Discount Delivery Charge:</label>
                                     </div>
                                     <div class="col">
                                         <select name="" id="deliveryDis" class="form-control">
@@ -245,7 +264,7 @@
                                         </select>
                                     </div>
                                     <div class="col">
-                                        <label class="form-label" for="deliveryCharge">Delivery Charge:</label>
+                                        <label class="form-label" for="deliveryCharge">Actual Delivery Charge:</label>
                                     </div>
                                     <div class="col">
                                         <input class="form-control" value="0" type="number" id="deliveryCharge">
@@ -346,6 +365,7 @@
         </div>
     </div> --}}
     @include('customer.modal')
+    {{-- @include('customer.editmodal') --}}
 @endsection
 
 @section('script')
@@ -394,7 +414,7 @@
                     }
                 });
             });
-            // product show by category
+            //customer data show
 
             function customerCreate() {
                 $.ajax({
@@ -409,14 +429,15 @@
                             `
                             <option data-mobile="0" data-active="1" data-name="0" value="0">Walk In
                                             Customer</option>
-                                        <option data-mobile="0" data-active="3" data-sname="Pathao" value="26.25">Pathao
-                                        </option>
-                                        <option data-mobile="0" data-active="4" data-sname="Food Panda" value="32.5">Food
-                                            Panda</option>
-                                        <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
-                                        <option data-mobile="0" data-active="5" data-sname="IPD" value="100">Chairman
-                                            Sir/Guest</option>
+                                       
                             `
+                            // <option data-mobile="0" data-active="3" data-sname="Pathao" value="26.25">Pathao
+                            //             </option>
+                            //             <option data-mobile="0" data-active="4" data-sname="Food Panda" value="32.5">Food
+                            //                 Panda</option>
+                            //             <option data-mobile="0" data-active="6" data-sname="IPD" value="0">IPD</option>
+                            //             <option data-mobile="0" data-active="5" data-sname="IPD" value="100">Chairman
+                            //                 Sir/Guest</option>
                         );
 
                         // Add options for each customer
@@ -424,13 +445,16 @@
                             var discount = parseFloat(customer.discount);
                             console.log("Discount value:", discount);
 
-                            $('#staffs').append(`<option data-mobile="${customer.mobile}" data-id="${customer.id}" class="customer" value="${customer.discount}" data-discount="${customer.discount}" data-active="${customer.card_status}" data-sname="${customer.user.name}">
+                            $('#staffs').append(`<option data-mobile="${customer.mobile}" data-address="${customer.address}" data-id="${customer.id}" class="customer" value="${customer.discount}" data-discount="${customer.discount}" data-active="${customer.card_status}" data-sname="${customer.user.name}">
                 ${customer.user.name} - ${customer.mobile} - ${customer.discount}-${customer.id}
-            </option>`);
+                     </option>`);
                         });
 
                         // Initialize select2 after populating options
                         $('#staffs').select2();
+
+                        // Set the value of #staffs after options have been populated
+
                     },
                     error: function(xhr) {
                         console.error(xhr);
@@ -441,7 +465,6 @@
             customerCreate();
             $('customerSubmitBtn').click(function() {
                 customerCreate();
-
             });
             $("#paymentMethod").change(function() {
                 var selectedMethod = $(this).val();
@@ -905,6 +928,36 @@
             $('#deliveryDis').on('change', function() {
                 payAmount();
             });
+            // saleCategory dropdown change notification
+            $('#saleCategory').on('change', function() {
+                let selectedOption = $('#saleCategory').find(':selected');
+                let active = parseFloat(selectedOption.data('active'));
+                let category = parseFloat(selectedOption.data('category'));
+                if (active == 7) {
+                    $('.saleCategory').removeClass('d-none');
+                } else {
+                    $('.saleCategory').addClass('d-none');
+                }
+
+                if (category == 1) {
+                    $('#customerSection').removeClass('d-none');
+                } else if (category == 2) {
+                    $('#customerSection').addClass('d-none');
+                }
+                payAmount();
+            });
+            // staff dropdown change
+            $('#staffs').on('change', function() {
+                let selectedOption = $(this).find(':selected');
+                let id = parseFloat(selectedOption.data('id'));
+                let url = "{{ url('customer') }}" + '/' + id + '/edit';
+                let html = `<a href="${url}" class="" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </a>`;
+                $('#customerEdit').html(html);
+                payAmount();
+            });
+
 
             function payAmount() {
                 var tbill = parseFloat($('#total-order').text());
@@ -914,21 +967,20 @@
                 var deliveryDis = parseFloat($('#deliveryDis').val());
                 var staffDis = parseFloat($('#staffs').val());
                 var oneDis = parseFloat($('#oneTimeDiscount').val());
+                var categoryDis = parseFloat($('#saleCategory').val());
                 console.log(staffDis + oneDis);
                 if (oneDis > staffDis) {
-
                     var prediscount = tbill * oneDis * 0.01;
                 } else if (oneDis < staffDis) {
-
                     var prediscount = tbill * staffDis * 0.01;
                 } else if (deliveryCharge > 0) {
                     if (deliveryDis === 100) {
                         var prediscount = deliveryCharge;
                     } else {
-
                         var prediscount = deliveryDis;
                     }
-
+                } else if (categoryDis > 0) {
+                    var prediscount = tbill * categoryDis * 0.01;
                 } else {
                     var prediscount = 0;
                 };
@@ -940,13 +992,19 @@
                 $('#discountComment').text(discount + ' Tk Discount Apply');
             }
 
-            // order Submitted
-            $('#staffs').on('change', function() {
-                payAmount();
-            });
             $('#submitp').click(function() {
                 let selectedOption = $('#staffs').find(':selected');
-                let activeAttr = selectedOption.data('active');
+                let selectedOption2 = $('#saleCategory').find(':selected');
+
+                let activeAttr2 = selectedOption2.data('active');
+                if (activeAttr2 == 1) {
+                    var activeAttr = selectedOption.data('active');
+                } else {
+                    var activeAttr = selectedOption2.data('active');
+
+                }
+
+                console.log(activeAttr2, activeAttr);
                 var totalbill = $('#total-order').text();
                 var paybill = $('#total-order2').text();
                 var reason = $('#reason').val();
@@ -974,10 +1032,50 @@
 
                 // Get the values of the 'data-sname' attribute and the text content
                 let sNameAttribute = selectedOption.data('sname');
+                let address = selectedOption.data('address');
                 let idAttr = selectedOption.data('id');
                 let mobileAttr = selectedOption.data('mobile');
 
                 let sNameText = selectedOption.text();
+                let deliveryCharge = $('#deliveryCharge').val();
+                if (activeAttr == 7 && mobileAttr == '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'First Select Customer',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
+                    // continue
+                    return false;
+                } else if (activeAttr == 7 && address == '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'First Input Delivery Charge',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
+                    return false;
+                } else if (activeAttr == 7 && deliveryCharge == 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'First Input Delivery Charge ' + address,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
+                    return false;
+                }
                 if (sInvoice === "Staff-Invoice" && staff === 0) {
 
                     Swal.fire({
