@@ -194,7 +194,11 @@
                                         data-bs-target="#exampleModal">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
-                                    <div id="customerEdit" class="input-group-text"></div>
+                                    <button type="button" class="input-group-text" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal1">
+                                        <i class="fa-solid fa-edit"></i>
+                                    </button>
+
 
                                 </div>
                             </div>
@@ -365,7 +369,7 @@
         </div>
     </div> --}}
     @include('customer.modal')
-    {{-- @include('customer.editmodal') --}}
+    @include('customer.editmodal')
 @endsection
 
 @section('script')
@@ -949,13 +953,70 @@
             // staff dropdown change
             $('#staffs').on('change', function() {
                 let selectedOption = $(this).find(':selected');
-                let id = parseFloat(selectedOption.data('id'));
-                let url = "{{ url('customer') }}" + '/' + id + '/edit';
-                let html = `<a href="${url}" class="" title="Edit">
-                    <i class="fas fa-edit"></i>
-                </a>`;
-                $('#customerEdit').html(html);
+                let id = selectedOption.data('id'); // No need to parse to float
+                let address = selectedOption.data('address');
+                let url =
+                "{{ route('customer.update', ['customer' => ':id']) }}"; // Note the placeholder ':id'
+
+                // Replace the placeholder with the actual id
+                url = url.replace(':id', id);
+
+                // Dynamically generate the form HTML
+                let html = `
+                            <div class="col-sm-4 mb-3 mb-sm-0">
+                                <label for="address" class="form-label">Address :</label>
+                                <input class="form-control" type="text" id="customerAddress" name="address" value="${address}">
+                            </div>
+                            <button class="my-2 btn btn-outline-info" id="customerUpdate" type="submit">Update</button>
+                        `;
+
+                // Replace the existing form with the new one
+                $('#editForm').html(html);
+
+
                 payAmount();
+            });
+            // Submit form using AJAX
+            $('#editForm').on('click', '#customerUpdate', function() {
+                let selectedOption = $('#staffs').find(':selected');
+                let id = selectedOption.data('id');
+                let address = $('#customerAddress').val(); // Get the address from the form
+alert(id);
+                // Make AJAX request
+                $.ajax({
+                    url: "{{ url('customer') }}/" + id,
+                    type: 'PATCH',
+                    data: {
+                        address: address
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                            'content') // Include CSRF token
+                    },
+                    success: function(data) {
+                        // Perform actions after successful update
+                        // For example, show a success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Customer Updated'
+                        });
+
+                        console.log('Customer updated successfully');
+                        // Optionally, you can perform additional actions such as refreshing the page or closing a modal
+                        // For example:
+                        // window.location.reload(); // Refresh the page
+                        // $('.modal').modal('hide'); // Close the modal
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating customer:', error);
+                        // Show error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while updating the customer.'
+                        });
+                    }
+                });
             });
 
 
@@ -993,6 +1054,7 @@
             }
 
             $('#submitp').click(function() {
+
                 let selectedOption = $('#staffs').find(':selected');
                 let selectedOption2 = $('#saleCategory').find(':selected');
 
@@ -1054,7 +1116,7 @@
                 } else if (activeAttr == 7 && address == '') {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'First Input Delivery Charge',
+                        title: 'Input Customer Address',
                         showCancelButton: false,
                         showConfirmButton: true,
                         confirmButtonText: 'OK',
