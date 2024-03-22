@@ -11,7 +11,7 @@ class OffOrder extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'tab_id','total','user_id','discount','reason','active'
+        'delivery_discount','delivery_charge','tab_id','total','user_id','discount','reason','active'
     ];
 
     public function offorderdetails()

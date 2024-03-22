@@ -981,19 +981,18 @@
                 let selectedOption = $('#staffs').find(':selected');
                 let id = selectedOption.data('id');
                 let address = $('#customerAddress').val(); // Get the address from the form
-alert(id);
+// alert(id);
                 // Make AJAX request
                 $.ajax({
                     url: "{{ url('customer') }}/" + id,
-                    type: 'PATCH',
+                    type: 'PUT',
                     data: {
-                        address: address
+                        address: address,
+                        _token: '{{ csrf_token() }}',
                     },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                            'content') // Include CSRF token
-                    },
+                   
                     success: function(data) {
+                        customerCreate();
                         // Perform actions after successful update
                         // For example, show a success message
                         Swal.fire({
@@ -1010,12 +1009,13 @@ alert(id);
                     error: function(xhr, status, error) {
                         console.error('Error updating customer:', error);
                         // Show error message
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred while updating the customer.'
-                        });
+                        // Swal.fire({
+                        //     icon: 'error',
+                        //     title: 'Error',
+                        //     text: 'An error occurred while updating the customer.'
+                        // });
                     }
+                    // location.reload(); 
                 });
             });
 
@@ -1034,12 +1034,7 @@ alert(id);
                     var prediscount = tbill * oneDis * 0.01;
                 } else if (oneDis < staffDis) {
                     var prediscount = tbill * staffDis * 0.01;
-                } else if (deliveryCharge > 0) {
-                    if (deliveryDis === 100) {
-                        var prediscount = deliveryCharge;
-                    } else {
-                        var prediscount = deliveryDis;
-                    }
+              
                 } else if (categoryDis > 0) {
                     var prediscount = tbill * categoryDis * 0.01;
                 } else {
@@ -1047,10 +1042,19 @@ alert(id);
                 };
                 console.log(prediscount);
                 var discount = prediscount.toFixed(0);
-                var num = tbill + deliveryCharge - discount; // Assuming you want to apply a 20% discount
+
+              
+                if (deliveryCharge >0) {
+                    
+                    $('#discountComment').text(deliveryDis+' TK Delivery Discount and '+discount + ' Tk Special Discount');
+                    var num = tbill + deliveryCharge - discount-deliveryDis; // Assuming you want to apply a 20% discount
+                } else {
+                    
+                    var num = tbill + deliveryCharge - discount; // Assuming you want to apply a 20% discount
+                    $('#discountComment').text(discount + ' Tk Discount Apply');
+                }
                 $('#total-order2').text(num); // Update the total order amount
                 $('#discountPer').text(staffDis);
-                $('#discountComment').text(discount + ' Tk Discount Apply');
             }
 
             $('#submitp').click(function() {
@@ -1090,7 +1094,7 @@ alert(id);
                 var reason = $('#reason').val();
                 var staff = parseFloat($('#staffs').val());
                 var sInvoice = $('#invoiceStaff').text();
-
+                var deliveryDis = parseFloat($('#deliveryDis').val());
 
                 // Get the values of the 'data-sname' attribute and the text content
                 let sNameAttribute = selectedOption.data('sname');
@@ -1229,6 +1233,8 @@ alert(id);
                         reason: sNameAttribute + '-' + mobileAttr + '-' + reason,
                         active: activeAttr,
                         cid: idAttr,
+                        delivery_charge: deliveryCharge,
+                        delivery_discount: deliveryDis,
                         paymentMethod: selectedMethod,
                         transactionId: transactionId || cardLastDigits || 'Cash',
                     },

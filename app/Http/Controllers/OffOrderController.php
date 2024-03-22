@@ -136,6 +136,8 @@ class OffOrderController extends Controller
             $order->discount = $request->discount;
             $order->reason = $request->reason;
             $order->active = $request->active;
+            $order->delivery_discount = $request->delivery_discount;
+            $order->delivery_charge = $request->delivery_charge;
             // if ($request->reason == 'Customer') {
             //     $order->active = 1;
             // } else {
